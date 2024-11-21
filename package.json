@@ -1,0 +1,55 @@
+{
+  "name": "Aida",
+  "version": "1.0.8",
+  "description": "Aida Virtual Assistant",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.0",
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.2",
+    "cookie-session": "^2.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.1",
+    "googleapis": "^144.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "keywords": [
+    "AI",
+    "virtual-assistant",
+    "generative-ai"
+  ],
+  "author": "Brandon Devonport",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-builder": "^23.6.0"
+  },
+  "build": {
+    "appId": "com.example.aida",
+    "productName": "Aida",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "aida.png"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "aida.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "aida.png"
+    }
+  }
+}
