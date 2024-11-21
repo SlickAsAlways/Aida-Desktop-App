@@ -3,6 +3,6 @@ services:
   aida-app:
     build: .
     ports:
-      - "5000:5000"
+      - "10000:10000"
     environment:
       - GOOGLE_API_KEY=AIzaSyBVxf9jgNgmBfeMioyMEOFljtvF0CxEWyY
