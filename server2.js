@@ -1,5 +1,3 @@
-// Existing imports and setup
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -54,6 +52,7 @@ app.post('/generate', async (req, res) => {
     }
 });
 
+// Listen on the port provided by Render or default to 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
