@@ -52,8 +52,7 @@ app.post('/generate', async (req, res) => {
     }
 });
 
-// Listen on the port provided by Render or default to 5000
-const PORT = process.env.PORT || 10000;  // Use 10000 for now
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
