@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Aida Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="theme.js" defer></script>
+    <script src="accounts2.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Your Account</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Account Information</h2>
+            <p><strong>Username:</strong> <span id="username-display"></span></p>
+            <p><strong>Email:</strong> <span id="email-display"></span></p>
+        </section>
+        <section>
+            <button id="logout-button">Logout</button>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', () => {
+    const usernameDisplay = document.getElementById('username-display');
+    const emailDisplay = document.getElementById('email-display');
+    const logoutButton = document.getElementById('logout-button');
+
+    // Retrieve user data from localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (user) {
+        usernameDisplay.textContent = user.username;
+        emailDisplay.textContent = user.email;
+    } else {
+        // If no user data found, redirect to login
+        window.location.href = 'login.html';
+    }
+
+    // Logout functionality
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    });
+});
+</script>
+</body>
+</html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Aida Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="theme.js" defer></script>
+    <script src="accounts2.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Your Account</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Account Information</h2>
+            <p><strong>Username:</strong> <span id="username-display"></span></p>
+            <p><strong>Email:</strong> <span id="email-display"></span></p>
+        </section>
+        <section>
+            <button id="logout-button">Logout</button>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', () => {
+    const usernameDisplay = document.getElementById('username-display');
+    const emailDisplay = document.getElementById('email-display');
+    const logoutButton = document.getElementById('logout-button');
+
+    // Retrieve user data from localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (user) {
+        usernameDisplay.textContent = user.username;
+        emailDisplay.textContent = user.email;
+    } else {
+        // If no user data found, redirect to login
+        window.location.href = 'login.html';
+    }
+
+    // Logout functionality
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy</title>
+    <link rel="stylesheet" href="privacy-policy.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background-color: #0169ac;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .home-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #F4CA16;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #777;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .privacy-content {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .privacy-content h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .privacy-content h3 {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            color: #0169ac;
+        }
+
+        .privacy-content p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .privacy-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+
+        .privacy-content ul li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: #0073e6;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #0169ac;
+            color: #fff;
+            margin-top: 30px;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ddd;
+        }
+
+        .privacy-content.dark-mode {
+            background-color: #1e1e1e;
+            color: #ddd;
+        }
+
+        header.dark-mode {
+            background-color: #333;
+        }
+
+        footer.dark-mode {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Privacy Policy</h1>
+        <a href="index.html" class="home-button">Home</a>
+
+    </header>
+
+    <section class="privacy-content">
+        <h2>Effective Date: 08/10/2024</h2>
+        <p>This Privacy Policy explains how <strong>Aida</strong> ("we", "us", or "our") collects, uses, and shares information about you when you use our application.</p>
+
+        <h3>Information We Collect</h3>
+        <p>We collect the following types of information:</p>
+        <ul>
+            <li><strong>Personal Information:</strong> We do not collect personally identifiable information unless provided.</li>
+            <li><strong>Usage Data:</strong> Automatically collected data such as session information and device details.</li>
+            <li><strong>Location Data:</strong> With your consent, we may collect location data for personalized services.</li>
+        </ul>
+
+        <h3>How We Use Your Information</h3>
+        <p>The information we collect is used to improve the app’s performance and personalize user experience.</p>
+
+        <h3>Data Storage and Security</h3>
+        <p>We store data for as long as necessary to fulfill its purpose, and we take appropriate security measures to protect your data.</p>
+
+        <h3>Your Rights</h3>
+        <p>You have the right to request access, correction, and deletion of your data, subject to legal obligations.</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Aida. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Function to toggle the theme and store it in localStorage
+        function toggleTheme() {
+            const isDarkMode = document.getElementById('theme-toggle').checked;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.updates-content').classList.add('dark-mode');
+                document.querySelectorAll('.update h3').forEach(element => {
+                    element.classList.add('dark-mode');
+                });
+                document.querySelector('.home-button').classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('.updates-content').classList.remove('dark-mode');
+                document.querySelectorAll('.update h3').forEach(element => {
+                    element.classList.remove('dark-mode');
+                });
+                document.querySelector('.home-button').classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Function to load the theme from localStorage when the page loads
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.privacy-content').classList.add('dark-mode');
+                document.querySelector('.home-button').classList.add('dark-mode');
+                document.getElementById('theme-toggle').checked = true;
+                document.querySelectorAll('.update h3').forEach(element => {
+                    element.classList.add('dark-mode');
+                });
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('.updates-content').classList.remove('dark-mode');
+                document.querySelector('.home-button').classList.remove('dark-mode');
+                document.getElementById('theme-toggle').checked = false;
+            }
+        }
+
+        // Load theme on page load
+        document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+</body>
+</html>

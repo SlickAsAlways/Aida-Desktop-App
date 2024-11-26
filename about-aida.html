@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Aida - Aida Pro</title>
+    <link rel="stylesheet" href="updates.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background-color: #0169ac;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .home-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #F4CA16;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #777;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .about-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .about-content p {
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #0169ac;
+            color: #fff;
+            margin-top: 30px;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ddd;
+        }
+
+        .about-content.dark-mode {
+            background-color: #1e1e1e;
+            color: #ddd;
+        }
+
+        header.dark-mode {
+            background-color: #333;
+        }
+
+        footer.dark-mode {
+            background-color: #333;
+        }
+
+        .home-button.dark-mode {
+            background-color: #F4CA16;
+        }
+
+        .home-button.dark-mode:hover {
+            background-color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>About Aida</h1>
+        <a href="index.html" class="home-button">Home</a>
+    </header>
+    <section class="about-content">
+        <h2>What is Aida?</h2>
+        <p>Aida is a virtual assistant application designed to enhance productivity and streamline task management. With its advanced features and user-friendly interface, Aida provides users with a seamless experience in managing their daily tasks, schedules, and reminders.</p>
+
+        <h2>Key Features</h2>
+        <ul>
+            <li>Task Management: Effortlessly create, edit, and manage tasks and reminders.</li>
+            <li>Voice Commands: Interact with Aida using voice commands for hands-free operation.</li>
+            <li>Calendar Integration: Sync with your calendar for efficient scheduling and reminders.</li>
+            <li>Dark Mode: Aesthetic option for users who prefer a darker interface, especially at night.</li>
+            <li>Multi-Platform Support: Use Aida on various devices and platforms with ease.</li>
+        </ul>
+
+        <h2>Our Mission</h2>
+        <p>We strive to empower users by providing a powerful tool that simplifies their daily routines. Our mission is to create an intuitive and effective virtual assistant that helps users achieve more with less effort.</p>
+
+        <h2>Get in Touch</h2>
+        <p>If you have any questions or feedback, feel free to reach out to us at <a href="mailto:brandon@mastercopy.co.uk">support@aida.co.uk</a>.</p>
+    </section>
+    <footer>
+        <p>&copy; 2024 Aida. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Function to toggle the theme and store it in localStorage
+        function toggleTheme() {
+            const isDarkMode = document.getElementById('theme-toggle').checked;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.about-content').classList.add('dark-mode');
+                document.querySelector('.home-button').classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('.about-content').classList.remove('dark-mode');
+                document.querySelector('.home-button').classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+
+            // Apply the theme to the analytics.html page
+            const analyticsThemeToggle = localStorage.getItem('theme');
+            const analyticsCheckbox = analyticsThemeToggle === 'dark';
+            document.getElementById('theme-toggle').checked = analyticsCheckbox;
+        }
+
+        // Function to load the theme from localStorage when the page loads
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.about-content').classList.add('dark-mode');
+                document.querySelector('.home-button').classList.add('dark-mode');
+                document.getElementById('theme-toggle').checked = true;
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('.about-content').classList.remove('dark-mode');
+                document.querySelector('.home-button').classList.remove('dark-mode');
+                document.getElementById('theme-toggle').checked = false;
+            }
+        }
+
+        // Load theme on page load
+        document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+</body>
+</html>

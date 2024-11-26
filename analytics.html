@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Assistant</title>
+    <style>
+        /* Global styling for a modern look */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+            height: 100vh; /* Full viewport height */
+            overflow: hidden; /* Prevent scrolling during animation */
+            transition: background-color 0.3s;
+        }
+
+        .toggle-button:hover {
+            background-color: #0056b3;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+            padding: 0px;
+            border-radius: 12px;
+            transition: transform 0.5s ease; /* Smooth transition */
+            position: relative; /* Use relative positioning to keep it centered */
+            transform: translateY(20px); /* Move down slightly by default */
+        }
+
+        /* Input styles */
+        input[type="text"] {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-right: 10px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            width: 300px; /* Adjusted width for sleek look */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Search button styling */
+        #searchBtn {
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #0169ac;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchBtn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Video results container */
+        .video-results {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            display: none; /* Hide video results initially */
+        }
+
+        /* Video card styling */
+        .video-card {
+            background-color: #fff;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer; /* Indicate that the card is clickable */
+        }
+
+        .video-card img {
+            border-radius: 8px;
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .video-card p {
+            font-size: 16px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        /* Overlay styles */
+        #videoOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        /* Video player styles */
+        #videoPlayer {
+            width: 80%;
+            height: 80%;
+            border-radius: 10px;
+            animation: grow 0.5s forwards;
+        }
+
+        @keyframes grow {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .video-card a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .video-card a:hover {
+            color: #0056b3;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Loading animation styles */
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+/* Home button styling */
+.home-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #0169ac;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    position: absolute; /* Positioning it absolutely */
+    top: 20px; /* Distance from the top */
+    left: 20px; /* Distance from the left */
+    transition: background-color 0.3s;
+    z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive layout for mobile */
+        @media screen and (max-width: 768px) {
+            .search-container {
+                flex-direction: column;
+            }
+
+            input[type="text"] {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+
+            .video-card {
+                width: 100%;
+                margin: 10px;
+            }
+        }
+
+        /* Dark mode styles */
+.dark-mode {
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* Light text */
+}
+
+.dark-mode .home-button {
+    background-color: #0056b3; /* Adjust button color for dark mode */
+}
+
+.dark-mode input[type="text"],
+.dark-mode #searchBtn {
+    background-color: #333; /* Dark input field */
+    color: #ffffff; /* Light text in input */
+    border: 2px solid #555; /* Adjust border color */
+}
+
+        /* Dark mode styles */
+.dark-mode {
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* Light text */
+}
+
+/* Adjust home button for dark mode */
+.dark-mode .home-button {
+    background-color: #F4CA16; /* Adjust button color for dark mode */
+}
+
+/* Adjust search bar and buttons for dark mode */
+.dark-mode input[type="text"],
+.dark-mode #searchBtn {
+    background-color: #333; /* Dark input field */
+    color: #ffffff; /* Light text in input */
+    border: 2px solid #555; /* Adjust border color */
+}
+
+/* Adjust video card styling for dark mode */
+.dark-mode .video-card {
+    background-color: #1e1e1e; /* Darker background for video cards */
+    color: #ffffff; /* Light text in video cards */
+    border: 1px solid #333; /* Dark border */
+}
+
+.dark-mode .video-card p {
+    color: #ffffff; /* Ensure title text is visible */
+}
+
+/* Hover effect for video cards in dark mode */
+.dark-mode .video-card:hover {
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2); /* Light shadow on hover */
+}
+
+/* Adjust video overlay for dark mode */a
+.dark-mode #videoOverlay {
+    background-color: rgba(0, 0, 0, 0.9); /* Slightly darker overlay */
+}
+
+/* Dark mode spinner styling */
+.dark-mode .spinner {
+    border: 8px solid #333; /* Dark grey border */
+    border-top: 8px solid #007bff; /* Light grey spinner */
+}
+
+        .home-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #38b6ff;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #003153;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+.home-button.dark-mode {
+            background-color: #F4CA16;
+        }
+
+        .home-button.dark-mode:hover {
+            background-color: #777;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Home Button -->
+    <a href="index.html" class="home-button">Home</a>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- AI Assistant Interface -->
+    <div class="search-container" id="searchContainer">
+        <input type="text" id="searchQuery" placeholder="Ask for a video...">
+        <button id="searchBtn" onclick="searchYouTube()">Ask Assistant</button>
+    </div>
+
+    <!-- Assistant Reply -->
+    <div class="assistant-reply" id="assistantReply">Sure, here is the video:</div>
+
+    <!-- Video Results -->
+    <div id="videoResults" class="video-results"></div>
+
+    <!-- Video Overlay -->
+    <div id="videoOverlay" onclick="closeOverlay()">
+        <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <script>
+
+        function toggleTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    if (themeToggle.checked) {
+        body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark'); // Save dark mode preference
+    } else {
+        body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light'); // Save light mode preference
+    }
+}
+
+// Function to apply the saved theme on page load
+function applySavedTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const body = document.body;
+    const themeToggle = document.getElementById('theme-toggle');
+
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        themeToggle.checked = true; // Set toggle to checked
+    } else {
+        body.classList.remove('dark-mode');
+        themeToggle.checked = false; // Set toggle to unchecked
+    }
+}
+
+// Call applySavedTheme on page load
+window.onload = applySavedTheme;
+
+
+        const apiKey = 'AIzaSyDWoFUposmNVtskKsQYGcS4WGyMSR7TdVE'; // Replace with your YouTube API key
+
+        function goHome() {
+            window.location.href = 'index.html'; // Redirect to index.html
+        }
+
+        function searchYouTube() {
+            const query = document.getElementById('searchQuery').value;
+
+            // Animate the search container to move down slightly
+            const searchContainer = document.getElementById('searchContainer');
+            searchContainer.style.transform = 'translateY(20px)'; // Move down slightly
+
+            // Display the assistant reply
+            const assistantReply = document.getElementById('assistantReply');
+            assistantReply.style.display = 'block';
+            assistantReply.style.opacity = '0';
+            setTimeout(() => {
+                assistantReply.style.opacity = '1'; // Fade in
+            }, 500); // Delay for the animation
+
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.style.display = 'flex';
+
+            // Hide video results initially
+            const videoResults = document.getElementById('videoResults');
+            videoResults.style.display = 'none';
+
+            // Perform the YouTube search
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&key=${apiKey}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    loadingOverlay.style.display = 'none'; // Hide loading overlay
+
+                    if (data.items.length > 0) {
+                        videoResults.innerHTML = ''; // Clear previous results
+                        data.items.forEach(item => {
+                            const videoId = item.id.videoId;
+                            const thumbnailUrl = item.snippet.thumbnails.high.url;
+                            const title = item.snippet.title;
+
+                            // Create a video card
+                            const videoCard = document.createElement('div');
+                            videoCard.classList.add('video-card');
+                            videoCard.innerHTML = `
+                                <img src="${thumbnailUrl}" alt="${title}">
+                                <p>${title}</p>
+                            `;
+                            videoCard.onclick = () => openVideo(videoId); // Open video on click
+                            videoResults.appendChild(videoCard);
+                        });
+                        videoResults.style.display = 'flex'; // Show video results
+                    } else {
+                        assistantReply.innerHTML = 'No videos found.';
+                    }
+                })
+                .catch(error => {
+                    loadingOverlay.style.display = 'none'; // Hide loading overlay
+                    console.error('Error fetching data from YouTube:', error);
+                });
+        }
+
+        function openVideo(videoId) {
+            const videoOverlay = document.getElementById('videoOverlay');
+            const videoPlayer = document.getElementById('videoPlayer');
+            videoPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`; // Auto-play video
+            videoOverlay.style.display = 'flex'; // Show video overlay
+        }
+
+        function closeOverlay() {
+            const videoOverlay = document.getElementById('videoOverlay');
+            const videoPlayer = document.getElementById('videoPlayer');
+            videoPlayer.src = ''; // Stop video
+            videoOverlay.style.display = 'none'; // Hide video overlay
+        }
+        function toggleTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    if (themeToggle.checked) {
+        body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark'); // Save dark mode preference
+    } else {
+        body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light'); // Save light mode preference
+    }
+}
+
+// Function to apply the saved theme on page load
+function applySavedTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const body = document.body;
+    const themeToggle = document.getElementById('theme-toggle');
+
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        themeToggle.checked = true; // Set toggle to checked
+    } else {
+        body.classList.remove('dark-mode');
+        themeToggle.checked = false; // Set toggle to unchecked
+    }
+}
+
+// Call applySavedTheme on page load
+window.onload = applySavedTheme;
+
+    </script>
+</body>
+</html>

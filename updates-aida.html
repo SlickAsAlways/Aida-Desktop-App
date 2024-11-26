@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Updates - Aida Pro</title>
+    <link rel="stylesheet" href="updates.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background-color: #0169ac;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .home-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #F4CA16;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-button:hover {
+            background-color: #777;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .updates-content {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .updates-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .update {
+            margin-bottom: 30px;
+        }
+
+        .update h3 {
+            font-size: 1.5rem;
+            color: #0169ac;
+        }
+
+        .update ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 0;
+        }
+
+        .update ul li {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #0169ac;
+            color: #fff;
+            margin-top: 30px;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ddd;
+        }
+
+        .updates-content.dark-mode {
+            background-color: #1e1e1e;
+            color: #ddd;
+        }
+
+        header.dark-mode {
+            background-color: #333;
+        }
+
+        footer.dark-mode {
+            background-color: #333;
+        }
+
+        .home-button.dark-mode {
+            background-color: #F4CA16;
+        }
+
+        .home-button.dark-mode:hover {
+            background-color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Updates</h1>
+        <a href="index.html" class="home-button">Home</a>
+        <label>
+
+        </label>
+    </header>
+    <section class="updates-content">
+        <h2>Latest Updates</h2>
+
+        <article class="update">
+            <h3>Version 1.0.6 - October 2024</h3>
+            <ul>
+                <li>Introduced a new feature using YouTube api to request any video.</li>
+                <li>Fixed performance issues.</li>
+                <li>More accurate replies.</li>
+                <li>Fixed dark mode to work throughout the whole application.</li>
+                <li>Updated color pallet</li>
+            </ul>
+        </article>
+
+
+        <article class="update">
+            <h3>Version 1.0.5 - October 2024</h3>
+            <ul>
+                <li>Dropdown behavior changed to open on hover rather than click.</li>
+                <li>Improved UI for selecting different assistant models (Smarter, Precise, Professional).</li>
+                <li>Enhanced performance of the application during model switching.</li>
+            </ul>
+        </article>
+
+        <article class="update">
+            <h3>Version 1.0.4 - September 2024</h3>
+            <ul>
+                <li>Introduced dark mode feature for a better user experience during nighttime use.</li>
+                <li>Added "Help" sidebar with quick access to essential resources and links.</li>
+                <li>Improved performance of the natural language processing engine.</li>
+                <li>Fixed minor bugs related to task management.</li>
+            </ul>
+        </article>
+
+        <article class="update">
+            <h3>Version 1.0.3 - September 2024</h3>
+            <ul>
+                <li>Enhanced calendar integration with support for multiple time zones.</li>
+                <li>New voice command features for hands-free operation.</li>
+                <li>Improved UI responsiveness on mobile devices.</li>
+                <li>Fixed an issue where reminders were not being triggered in certain conditions.</li>
+            </ul>
+        </article>
+
+        <article class="update">
+            <h3>Version 1.0.2 - September 2024</h3>
+            <ul>
+                <li>Major UI overhaul with a more modern and intuitive design.</li>
+                <li>Added support for third-party app integrations (e.g., Google Calendar, Slack).</li>
+                <li>Introduced a new feature to manage tasks using natural language.</li>
+                <li>Fixed various bugs and improved overall stability.</li>
+            </ul>
+        </article>
+
+        <article class="update">
+            <h3>Version 1.0.1 - August 2024</h3>
+            <ul>
+                <li>Added the ability to set recurring tasks and reminders.</li>
+                <li>Improved the accuracy of the virtual assistant's responses.</li>
+                <li>Fixed issues with speech recognition in noisy environments.</li>
+            </ul>
+        </article>
+
+        <article class="update">
+            <h3>Version 1.0.0 - August 2024</h3>
+            <ul>
+                <li>Initial release of Aida Pro.</li>
+                <li>Basic task management and calendar features.</li>
+                <li>Voice command support for common tasks.</li>
+                <li>Integration with email and messaging platforms.</li>
+            </ul>
+        </article>
+    </section>
+    <footer>
+        <p>&copy; 2024 Aida. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Function to toggle the theme and store it in localStorage
+        function toggleTheme() {
+            const isDarkMode = document.getElementById('theme-toggle').checked;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.updates-content').classList.add('dark-mode');
+                document.querySelector('.home-button').classList.add('dark-mode');
+                document.querySelectorAll('.update h3').forEach(element => {
+                    element.classList.add('dark-mode');
+                });
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('.updates-content').classList.remove('dark-mode');
+                document.querySelector('.home-button').classList.remove('dark-mode');
+                document.querySelectorAll('.update h3').forEach(element => {
+                    element.classList.remove('dark-mode');
+                });
+                localStorage.setItem('theme', 'light');
+            }
+
+            // Apply the theme to the analytics.html page
+            const analyticsThemeToggle = localStorage.getItem('theme');
+            const analyticsCheckbox = analyticsThemeToggle === 'dark';
+            document.getElementById('theme-toggle').checked = analyticsCheckbox;
+        }
+
+        // Function to load the theme from localStorage when the page loads
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.updates-content').classList.add('dark-mode');
+                document.querySelector('.home-button').classList.add('dark-mode');
+                document.getElementById('theme-toggle').checked = true;
+                document.querySelectorAll('.update h3').forEach(element => {
+                    element.classList.add('dark-mode');
+                });
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.querySelector('.updates-content').classList.remove('dark-mode');
+                document.querySelector('.home-button').classList.remove('dark-mode');
+                document.getElementById('theme-toggle').checked = false;
+            }
+        }
+
+        // Load theme on page load
+        document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+</body>
+</html>
+

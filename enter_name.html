@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Your Name</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #3a3a3a, #1e1e1e);
+            overflow: hidden; /* Prevent scrolling */
+        }
+        #name-container {
+            text-align: center;
+            background-color: rgba(30, 30, 30, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.6s ease forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h1 {
+            font-size: 30px;
+            margin-bottom: 25px;
+            color: #0169ac;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+        }
+        #name-input {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            width: 280px;
+            background-color: #444;
+            color: #fff;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        #name-input::placeholder {
+            color: #bbb;
+        }
+        #name-input:focus {
+            outline: none;
+            border: 2px solid #edcb4d;
+            box-shadow: #edcb4d;
+        }
+        #submit-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            background-color: #0169ac;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        #submit-button::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.4s ease;
+            z-index: 0;
+        }
+        #submit-button:hover {
+            background-color: #003153;
+            transform: translateY(-3px);
+        }
+        #submit-button:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #welcome-message {
+            display: none;
+            font-size: 32px;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #00FFFF, #0000FF, #4B0082, #9400D3);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow-animation 1.5s linear infinite;
+        }
+        @keyframes rainbow-animation {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div id="name-container">
+        <h1>Welcome! Please Enter Your Name</h1>
+        <input type="text" id="name-input" placeholder="Your Name" required>
+        <br>
+        <button id="submit-button">Submit</button>
+        <div id="welcome-message">Welcome!</div>
+    </div>
+
+    <script>
+        document.getElementById('submit-button').addEventListener('click', function() {
+            const name = document.getElementById('name-input').value;
+            if (name) {
+                localStorage.setItem('userName', name); // Store the name in local storage
+
+                // Show the welcome message with animation
+                const welcomeMessage = document.getElementById('welcome-message');
+                welcomeMessage.style.display = 'block'; // Make the message visible
+                setTimeout(() => {
+                    welcomeMessage.style.opacity = '1'; // Fade in
+                    welcomeMessage.style.transform = 'translateY(0)'; // Move into place
+                }, 100);
+
+                // Redirect after a short delay (after welcome message fades in)
+                setTimeout(() => {
+                    window.location.href = 'index.html'; // Redirect to index.html
+                }, 2500); // Increased to allow for better visibility
+
+                // Add a scaling effect to the name container before redirecting
+                const nameContainer = document.getElementById('name-container');
+                nameContainer.style.transform = 'scale(0.95)';
+            } else {
+                alert('Please enter a name.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2728 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+        :root {
+    /* Light theme colors */
+    --background-color: #f4f4f6;
+    --chat-background: #ffffff;
+    --message-background: #f8f8f8;
+    --message-hover: #f1f1f1;
+    --text-color: #333;
+    --button-background: #0169ac;
+    --button-hover: #003153;
+    --divider-color: #ddd;
+    --warning-color: #888;
+    --spinner-border: rgba(0, 0, 0, 0.1);
+    --spinner-left: #007bff;
+
+    /* Dark theme colors */
+    --dark-background-color: #1e1e1e;
+    --dark-chat-background: #2c2c2c;
+    --dark-message-background: #3c3c3c;
+    --dark-message-hover: #4c4c4c;
+    --dark-text-color: #e0e0e0;
+    --dark-button-background: #0169ac;
+    --dark-button-hover: #003153;
+    --dark-divider-color: #444;
+    --dark-warning-color: #ccc;
+    --dark-spinner-border: rgba(255, 255, 255, 0.1);
+    --dark-spinner-left: #007bff;
+}
+
+
+        body, h1, div {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+       /* Sidebar styles */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px; /* Hidden by default */
+    width: 250px;
+    height: 100%;
+    background-color: var(--chat-background);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s ease, opacity 0.3s ease; /* Updated transition properties */
+    z-index: 1000;
+    padding: 20px;
+    opacity: 0;
+}
+
+#sidebar.open {
+    transform: translateX(250px); /* Smoothly translate the sidebar in */
+    opacity: 1; /* Fade in */
+}
+
+#sidebar .close-btn {
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#sidebar .close-btn:hover {
+    color: var(--button-background);
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 60px; /* Adjust margin to position the list below the close button */
+}
+
+#sidebar ul li {
+    margin: 15px 0;
+}
+
+#sidebar ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 18px;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+#sidebar ul li a i {
+    margin-right: 15px; /* Add some spacing between icon and text */
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover i {
+    color: var(--button-background);
+}
+
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 210px;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Dark theme button styles */
+body.dark-mode #sidebar ul li button {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode #sidebar ul li button:hover {
+    background-color: var(--dark-button-hover);
+}
+
+/* Additional styling for better UX */
+#sidebar ul li button, #sidebar ul li a {
+    transition: transform 0.3s ease; /* Add hover effect for scaling */
+}
+
+#sidebar ul li button:hover, #sidebar ul li a:hover {
+    transform: scale(1.05); /* Slightly scale up the element on hover */
+}
+
+
+        .container img.logo {
+            max-width: 4%;
+            position: fixed;
+            left: 50px;
+            bottom: 715px;
+            height: auto;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        #chat-box {
+            padding: 10px;
+            height: 500px;
+            width: 800px;
+            position: absolute;
+            left: 452px;
+            overflow-y: auto;
+            background: transparent;
+            margin-bottom: 10px;
+            justify-content: center;
+            display: flex;
+        }
+
+        #chat-history {
+            display: flex;
+            background: transparent;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 75%;
+            word-wrap: break-word;
+            font-size: 16px;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            background-color: var(--message-background);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+
+        .message:hover {
+            background-color: var(--message-hover);
+        }
+
+        .message img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .message .content {
+            display: flex;
+            background: transparent;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .message .response-text {
+            margin-bottom: 5px;
+            background: transparent;
+
+        }
+
+        .message .options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding-top: 5px;
+            border-top: 1px solid var(--divider-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message .options button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+:root {
+    --background-color: white; /* Light mode background */
+    --text-color: black; /* Light mode text color */
+}
+
+.dark-mode {
+    --background-color: black; /* Dark mode background */
+    --text-color: white; /* Dark mode text color */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.message .options button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+
+
+        .message .options button:hover {
+            color: var(--button-background);
+        }
+
+        .message.show-options .options {
+            opacity: 1;
+            background: transparent;
+        }
+
+        .user {
+            align-self: flex-end;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .assistant {
+            align-self: flex-start;
+            text-align: left;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: var(--divider-color);
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .spinner {
+            border: 4px solid var(--spinner-border);
+            border-left: 4px solid var(--spinner-left);
+            border-radius: 50%;
+            width: 24px;
+            background: transparent;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #user-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 50%;
+            bottom: 60px;
+            transform: translateX(-50%);
+            width: 740px;
+            height: 80px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            padding-left: 45px;
+            background-image: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/solid/microphone.svg');
+            background-position: 15px center;
+            background-repeat: no-repeat;
+            color: #333;
+        }
+
+        #user-input:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        #send-button {
+            margin-left: 10px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 50%;
+            background-color: var(--button-background);
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #send-button i {
+            margin: 0;
+        }
+
+        #send-button:hover {
+            background-color: var(--button-hover);
+            transform: scale(1.1);
+        }
+
+              #suggestion-buttons {
+    margin: 0; /* Remove margin if needed */
+    position: fixed; /* Use fixed positioning */
+    bottom: 165px; /* Fixed distance from the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for centering */
+    background: transparent; /* Keep the background transparent */
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    z-index: 1000; /* Make sure it's on top of other elements */
+}
+
+#suggestion-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Add transition for transform */
+    white-space: nowrap; /* Prevents button text from wrapping */
+}
+
+/* Add hover effect for buttons */
+#suggestion-buttons button:hover {
+    background-color: var(--button-hover); /* Change to hover color */
+    transform: scale(1.1); /* Scale up the button slightly */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for effect */
+}
+
+
+        #accuracy-warning {
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            background: transparent;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--warning-color);
+            text-align: center;
+        }
+
+            /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+         /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+        /* Style for the h1 text */
+            /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+          /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+       /* Style for the title container */
+#title-container {
+    background-color: transparent; /* Ensures no background color */
+    overflow: hidden; /* Hides any overflow */
+}
+
+/* Style for the h1 text */
+#title-container h1 {
+    font-size: 36px;
+    background: linear-gradient(50deg, purple, pink, darkblue, red, indigo, violet, green, yellow, lightblue );
+    background-size: 400%;
+    background-clip: text;
+    color: transparent;
+    animation: rainbow 4s linear forwards; /* Run animation once */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: absolute;
+    background-color: transparent; /* Ensures no background color for the h1 */
+    margin: 0; /* Resets any default margin */
+    padding: 0; /* Resets any default padding */
+    left: 597px;
+    bottom: 500px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Keyframes for rainbow shine effect */
+@keyframes rainbow {
+    0% {
+        background-position: 0% 50%;
+        -webkit-text-fill-color: transparent; /* Keep text transparent initially */
+    }
+    100% {
+        background-position: 100% 50%;
+        -webkit-text-fill-color: #0169ac; /* Revert to original color */
+    }
+}
+
+        /* Dark theme */
+        body.dark-mode {
+            background-color: var(--dark-background-color);
+        }
+
+        body.dark-mode {
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode #chat-box {
+            background-color: var(--dark-chat-background);
+            background: transparent;
+        }
+
+        body.dark-mode .message .options {
+            background-color: var(--dark-chat-background);
+            background: transparent;
+        }
+
+        body.dark-mode .message {
+            background-color: var(--dark-message-background);
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode .message .response-text {
+            background-color: var(--dark-message-background);
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode .message:hover {
+            background-color: var(--dark-message-hover);
+        }
+
+        body.dark-mode .divider {
+            background-color: var(--dark-divider-color);
+        }
+
+        body.dark-mode #user-input-container {
+            background-color: rgba(44, 44, 44, 0.9);
+        }
+
+        body.dark-mode #user-input {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode #send-button {
+            background-color: var(--dark-button-background);
+        }
+
+        body.dark-mode #send-button:hover {
+            background-color: var(--dark-button-hover);
+        }
+
+        body.dark-mode #accuracy-warning {
+            color: var(--dark-warning-color);
+        }
+
+        body.dark-mode #title-container h1 {
+
+        }
+
+        body.dark-mode #sidebar {
+            background-color: var(--dark-chat-background);
+            background: transparent;
+        }
+
+        /* Add this to your existing CSS */
+        .hidden {
+            display: none;
+        }
+
+        #title-container.show {
+            display: block;
+        }
+
+        #chat-box.show {
+            display: block;
+        }
+
+        #sidebar ul li {
+    margin: 15px 0;
+}
+
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+        /* Light and Dark mode button styles */
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Dark theme button styles */
+body.dark-mode #sidebar ul li button {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode #sidebar ul li button:hover {
+    background-color: var(--dark-button-hover);
+}
+
+/* Button icons styling */
+#sidebar ul li a {
+    display: flex;
+    position: relative;
+    bottom: -579px;
+    left: 10px;
+    gap: 7%;
+    align-items: center;
+    text-decoration: none;
+}
+
+#sidebar ul li a i {
+    color: var(--text-color);
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover i {
+    color: var(--button-background);
+}
+
+/* Dark theme icon styles */
+body.dark-mode #sidebar ul li a i {
+    color: var(--dark-text-color);
+}
+
+body.dark-mode #sidebar ul li a:hover i {
+    color: var(--dark-button-background);
+}
+
+        /* Font import */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+/* Default font family */
+body, h1, div {
+    font-family: Montserrat, Arial, sans-serif;
+}
+
+/* Sidebar button styles */
+#sidebar ul li a, #sidebar ul li button {
+    font-family: Montserrat, Arial, sans-serif;
+    font-weight: 600; /* Bold weight for better emphasis */
+}
+
+/* Existing CSS for other elements */
+#sidebar ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    color: var(--button-background);
+}
+
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Dark theme button styles */
+body.dark-mode #sidebar ul li button {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode #sidebar ul li button:hover {
+    background-color: var(--dark-button-hover);
+}
+
+        /* Toggle Switch Styles */
+/* Toggle Switch Styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--button-background);
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--button-hover);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Dark mode styles for toggle */
+body.dark-mode .switch .slider {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode .switch input:checked + .slider {
+    background-color: var(--dark-button-hover);
+}
+
+/* Styling for theme label */
+#theme-label {
+    margin-left: 10px;
+    font-size: 16px;
+    color: var(--text-color);
+    vertical-align: middle;
+}
+
+/* Dark mode styling for the theme label */
+body.dark-mode #theme-label {
+    color: var(--dark-text-color);
+}
+
+/* Dark mode styling for the theme label */
+body.dark-mode #help-menu {
+    color: var(--dark-text-color);
+}
+
+/* Dark mode styling for the theme label */
+body.dark-mode #question-button {
+    color: var(--dark-text-color);
+}
+
+           /* Settings menu styles */
+        #settings-menu {
+            position: absolute;
+            top: 644px;
+            left: 167px;
+            display: none;
+            width: 200px;
+            padding: 10px;
+            background-color: var(--chat-background);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1001;
+        }
+
+        #settings-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #settings-menu ul li {
+            margin: 10px 0;
+        }
+
+        #settings-menu ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        #settings-menu ul li a:hover {
+            color: var(--button-background);
+        }
+
+        /* Dark theme settings menu */
+        body.dark-mode #settings-menu {
+            background-color: var(--dark-chat-background);
+        }
+
+
+
+.paste-button {
+  position: relative;
+  background: transparent;
+  position: absolute;
+  left: 100px;
+  bottom: 577px;
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.button {
+  background-color: #4444;
+  color: #ffff;
+  padding: 6px 8px;
+  font-size: 15px;
+  position: relative;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  cursor: pointer;
+  bottom: 120px;
+
+}
+
+.dropdown-content {
+  display: none;
+  font-size: 13px;
+  position: absolute;
+  z-index: 1;
+  min-width: 50px;
+  background-color: #212121;
+  border: 2px solid #0169ac;
+  border-radius: 5px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  width: 135px;
+  bottom: 25px;
+}
+
+.dropdown-content a {
+  color: #FFFF;
+  padding: 8px 10px;
+  text-decoration: none;
+  display: block;
+  transition: 0.1s;
+}
+
+.dropdown-content a:hover {
+  background-color: #003153;
+  color: #fff;
+}
+
+.dropdown-content a:focus {
+  background-color: #003153;
+  color: #38B7FF;
+}
+
+.dropdown-content #top:hover {
+  border-radius: 0px 13px 0px 0px;
+}
+
+.dropdown-content #bottom:hover {
+  border-radius: 0px 0px 13px 13px;
+}
+
+.paste-button:hover button {
+  border-radius: 15px 15px 0px 0px;
+}
+
+.paste-button:hover .dropdown-content {
+  display: block;
+}
+
+
+
+
+        body.dark-mode #settings-menu ul li a {
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode #settings-menu ul li a:hover {
+            color: var(--dark-button-background);
+        }
+
+
+        body.dark-mode #help-menu {
+            background-color: var(--dark-chat-background);
+        }
+
+body.dark-mode #help-menu ul li a {
+            color: var(--dark-text-color);
+        }
+
+body.dark-mode #help-menu ul li a:hover {
+            color: var(--dark-button-background);
+        }
+
+        /* Custom Scrollbar Styles */
+#chat-box::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+}
+
+#chat-box::-webkit-scrollbar-thumb {
+    background-color: var(--button-background); /* Scrollbar thumb color */
+    border-radius: 10px; /* Round the scrollbar thumb */
+    border: 2px solid var(--message-background); /* Add padding around the thumb */
+}
+
+#chat-box::-webkit-scrollbar-thumb:hover {
+    background-color: var(--button-hover); /* Thumb color on hover */
+}
+
+#chat-box::-webkit-scrollbar-track {
+    background-color: var(--chat-background); /* Scrollbar track color */
+    border-radius: 10px; /* Round the scrollbar track */
+}
+
+#chat-box {
+    scrollbar-width: thin; /* For Firefox: set scrollbar width */
+    scrollbar-color: var(--button-background) var(--chat-background); /* For Firefox: thumb and track color */
+}
+
+
+.Btn {
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  bottom: -400px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: .4s;
+  cursor: pointer;
+  position: relative;
+  background-color: rgb(31, 31, 31);
+  overflow: hidden;
+}
+
+.svgIcon {
+  transition-duration: .3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.text {
+  position: absolute;
+  color: rgb(255, 255, 255);
+  width: 120px;
+  font-weight: 600;
+  opacity: 0;
+  transition-duration: .4s;
+}
+
+.Btn:hover {
+  width: 110px;
+  transition-duration: .4s;
+  border-radius: 30px;
+}
+
+.Btn:hover .text {
+  opacity: 1;
+  transition-duration: .4s;
+}
+
+.Btn:hover .svgIcon {
+  opacity: 0;
+  transition-duration: .3s;
+}
+
+ #help-button {
+    cursor: pointer;
+}
+
+#help-menu {
+       position: absolute;
+            top: 612px;
+            left: 150px;
+            display: none;
+            width: 200px;
+            height: 170px;
+            padding: 10px;
+            background-color: var(--chat-background);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1001;
+
+#help-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#help-menu ul li {
+    margin: 10px 0;
+}
+
+#help-menu ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+#help-menu ul li a:hover {
+    color: #b0b0b0; /* Slightly lighter color on hover */
+}
+
+#help-menu ul li a i {
+    margin-right: 8px; /* Space between icon and text */
+}
+
+#question-button {
+    background-color: transparent;
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#privacy-button {
+    background-color: transparent;
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    position:absolute;
+    bottom: 100px;
+    font-size: 14px;
+    gap: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 90%;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#question-button i {
+    margin-right: 8px;
+}
+
+#question-button:hover {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+}
+
+#dark-mode-switch {
+    margin: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#privacy-button
+#question-button,
+#updates-button {
+    background-color: transparent;
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#question-button i,
+#updates-button i {
+    margin-right: 8px;
+}
+
+#question-button:hover,
+#updates-button:hover {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+}
+
+#privacy-button:hover,
+#updates-button:hover {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+}
+
+#dark-mode-switch {
+    margin: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+
+        .hidden {
+    visibility: hidden; /* Hides the element but maintains its space */
+}
+
+
+        #settings-menu select {
+    margin-left: 10px;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+#settings-menu select:hover {
+    border-color: #007bff; /* Change border color on hover */
+}
+
+
+
+/* Styling for list items */
+li {
+    list-style: none; /* Remove bullet points */
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Styling for label */
+.language-label {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    margin-right: 15px;
+}
+
+/* Modern and sleek dropdown styling */
+.language-selector {
+    padding: 10px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+    transition: all 0.3s ease-in-out;
+    width: 200px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Add a custom dropdown arrow */
+.language-selector::after {
+    content: '▼'; /* Custom arrow */
+    position: absolute;
+    right: 10px;
+    pointer-events: none;
+}
+
+/* Hover and focus effects */
+.language-selector:hover,
+.language-selector:focus {
+    border-color: #007bff;
+    background-color: #e9ecef;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Styling for the dropdown options */
+.language-selector option {
+    padding: 10px;
+    font-size: 14px;
+}
+
+.paste-button {
+            position: relative;
+            display: inline-block;
+        }
+
+        .button {
+            background-color: #007bff; /* Modern blue color */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px; /* Rounded corners */
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+        }
+
+        .dropdown-content {
+            display: none; /* Hide the dropdown by default */
+            position: absolute;
+            background-color: white; /* White background for dropdown */
+            min-width: 200px;
+            border-radius: 8px; /* Rounded corners for dropdown */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow for dropdown */
+            z-index: 1;
+            margin-top: 10px; /* Space between button and dropdown */
+            overflow: hidden; /* Hide overflow for rounded corners */
+        }
+
+        .dropdown-content a {
+            color: #333; /* Dark text for links */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1; /* Light grey on hover */
+        }
+
+        /* To enable clicking the button to toggle the dropdown */
+        .dropdown-content.show {
+            display: block; /* Show dropdown */
+        }
+
+
+        * {
+    box-sizing: border-box; /* Ensure padding does not affect total width */
+}
+
+body {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+    background-color: #f0f0f0; /* Light background for contrast */
+    font-family: Arial, sans-serif; /* Set a clean font */
+}
+
+#title-container {
+    text-align: center; /* Center text */
+}
+
+#name-input-container {
+    display: flex; /* Use flexbox for input and button */
+    flex-direction: column; /* Stack input and button vertically */
+    align-items: center; /* Center align items */
+    margin-top: 20px; /* Space above input */
+
+
+         #name-input-container,
+        #change-name-container {
+            display: none; /* Hidden by default */
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #sidebar {
+            background-color: #fff;
+            padding: 15px;
+            border-right: 1px solid #ccc;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+        }
+
+        #chat-history {
+            margin-left: 220px; /* Space for sidebar */
+            padding: 20px;
+        }
+
+        .label {
+            position: relative;
+            display: block;
+            width: 250px;
+            margin: 0 auto;
+            border: 2px solid #373737;
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 10px;
+            background-color: transparent;
+            color: #333;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Feedback Popup Styles */
+.feedback-popup {
+    display: none;
+    position: absolute;
+    width: 300px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.feedback-popup h4 {
+    margin: 0 0 10px;
+    font-size: 1.1em;
+}
+
+.feedback-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feedback-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feedback-options input[type="checkbox"] {
+    accent-color: #007BFF;
+}
+
+.feedback-textarea {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.submit-feedback-btn {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+=======
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+        :root {
+    /* Light theme colors */
+    --background-color: #f4f4f6;
+    --chat-background: #ffffff;
+    --message-background: #f8f8f8;
+    --message-hover: #f1f1f1;
+    --text-color: #333;
+    --button-background: #0169ac;
+    --button-hover: #003153;
+    --divider-color: #ddd;
+    --warning-color: #888;
+    --spinner-border: rgba(0, 0, 0, 0.1);
+    --spinner-left: #007bff;
+
+    /* Dark theme colors */
+    --dark-background-color: #1e1e1e;
+    --dark-chat-background: #2c2c2c;
+    --dark-message-background: #3c3c3c;
+    --dark-message-hover: #4c4c4c;
+    --dark-text-color: #e0e0e0;
+    --dark-button-background: #0169ac;
+    --dark-button-hover: #003153;
+    --dark-divider-color: #444;
+    --dark-warning-color: #ccc;
+    --dark-spinner-border: rgba(255, 255, 255, 0.1);
+    --dark-spinner-left: #007bff;
+}
+
+
+        body, h1, div {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+       /* Sidebar styles */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px; /* Hidden by default */
+    width: 250px;
+    height: 100%;
+    background-color: var(--chat-background);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s ease, opacity 0.3s ease; /* Updated transition properties */
+    z-index: 1000;
+    padding: 20px;
+    opacity: 0;
+}
+
+#sidebar.open {
+    transform: translateX(250px); /* Smoothly translate the sidebar in */
+    opacity: 1; /* Fade in */
+}
+
+#sidebar .close-btn {
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#sidebar .close-btn:hover {
+    color: var(--button-background);
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 60px; /* Adjust margin to position the list below the close button */
+}
+
+#sidebar ul li {
+    margin: 15px 0;
+}
+
+#sidebar ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 18px;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+#sidebar ul li a i {
+    margin-right: 15px; /* Add some spacing between icon and text */
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover i {
+    color: var(--button-background);
+}
+
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 210px;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Dark theme button styles */
+body.dark-mode #sidebar ul li button {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode #sidebar ul li button:hover {
+    background-color: var(--dark-button-hover);
+}
+
+/* Additional styling for better UX */
+#sidebar ul li button, #sidebar ul li a {
+    transition: transform 0.3s ease; /* Add hover effect for scaling */
+}
+
+#sidebar ul li button:hover, #sidebar ul li a:hover {
+    transform: scale(1.05); /* Slightly scale up the element on hover */
+}
+
+
+        .container img.logo {
+            max-width: 4%;
+            position: fixed;
+            left: 50px;
+            bottom: 715px;
+            height: auto;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        #chat-box {
+            padding: 10px;
+            height: 500px;
+            width: 800px;
+            position: absolute;
+            left: 452px;
+            overflow-y: auto;
+            background: transparent;
+            margin-bottom: 10px;
+            justify-content: center;
+            display: flex;
+        }
+
+        #chat-history {
+            display: flex;
+            background: transparent;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 75%;
+            word-wrap: break-word;
+            font-size: 16px;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+            background-color: var(--message-background);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+
+        .message:hover {
+            background-color: var(--message-hover);
+        }
+
+        .message img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .message .content {
+            display: flex;
+            background: transparent;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .message .response-text {
+            margin-bottom: 5px;
+            background: transparent;
+
+        }
+
+        .message .options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding-top: 5px;
+            border-top: 1px solid var(--divider-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message .options button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+:root {
+    --background-color: white; /* Light mode background */
+    --text-color: black; /* Light mode text color */
+}
+
+.dark-mode {
+    --background-color: black; /* Dark mode background */
+    --text-color: white; /* Dark mode text color */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.message .options button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+
+
+        .message .options button:hover {
+            color: var(--button-background);
+        }
+
+        .message.show-options .options {
+            opacity: 1;
+            background: transparent;
+        }
+
+        .user {
+            align-self: flex-end;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .assistant {
+            align-self: flex-start;
+            text-align: left;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: var(--divider-color);
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .spinner {
+            border: 4px solid var(--spinner-border);
+            border-left: 4px solid var(--spinner-left);
+            border-radius: 50%;
+            width: 24px;
+            background: transparent;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #user-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 50%;
+            bottom: 60px;
+            transform: translateX(-50%);
+            width: 740px;
+            height: 80px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            padding-left: 45px;
+            background-image: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/svgs/solid/microphone.svg');
+            background-position: 15px center;
+            background-repeat: no-repeat;
+            color: #333;
+        }
+
+        #user-input:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        #send-button {
+            margin-left: 10px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 50%;
+            background-color: var(--button-background);
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #send-button i {
+            margin: 0;
+        }
+
+        #send-button:hover {
+            background-color: var(--button-hover);
+            transform: scale(1.1);
+        }
+
+              #suggestion-buttons {
+    margin: 0; /* Remove margin if needed */
+    position: fixed; /* Use fixed positioning */
+    bottom: 165px; /* Fixed distance from the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for centering */
+    background: transparent; /* Keep the background transparent */
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    z-index: 1000; /* Make sure it's on top of other elements */
+}
+
+#suggestion-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Add transition for transform */
+    white-space: nowrap; /* Prevents button text from wrapping */
+}
+
+/* Add hover effect for buttons */
+#suggestion-buttons button:hover {
+    background-color: var(--button-hover); /* Change to hover color */
+    transform: scale(1.1); /* Scale up the button slightly */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for effect */
+}
+
+
+        #accuracy-warning {
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            background: transparent;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--warning-color);
+            text-align: center;
+        }
+
+            /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+         /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+        /* Style for the h1 text */
+            /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+          /* Style for the title container */
+        #title-container {
+            text-align: center;
+            justify-content: center;
+
+        }
+
+       /* Style for the title container */
+#title-container {
+    background-color: transparent; /* Ensures no background color */
+    overflow: hidden; /* Hides any overflow */
+}
+
+/* Style for the h1 text */
+#title-container h1 {
+    font-size: 36px;
+    background: linear-gradient(50deg, purple, pink, darkblue, red, indigo, violet, green, yellow, lightblue );
+    background-size: 400%;
+    background-clip: text;
+    color: transparent;
+    animation: rainbow 4s linear forwards; /* Run animation once */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: absolute;
+    background-color: transparent; /* Ensures no background color for the h1 */
+    margin: 0; /* Resets any default margin */
+    padding: 0; /* Resets any default padding */
+    left: 597px;
+    bottom: 500px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Keyframes for rainbow shine effect */
+@keyframes rainbow {
+    0% {
+        background-position: 0% 50%;
+        -webkit-text-fill-color: transparent; /* Keep text transparent initially */
+    }
+    100% {
+        background-position: 100% 50%;
+        -webkit-text-fill-color: #0169ac; /* Revert to original color */
+    }
+}
+
+        /* Dark theme */
+        body.dark-mode {
+            background-color: var(--dark-background-color);
+        }
+
+        body.dark-mode {
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode #chat-box {
+            background-color: var(--dark-chat-background);
+            background: transparent;
+        }
+
+        body.dark-mode .message .options {
+            background-color: var(--dark-chat-background);
+            background: transparent;
+        }
+
+        body.dark-mode .message {
+            background-color: var(--dark-message-background);
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode .message .response-text {
+            background-color: var(--dark-message-background);
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode .message:hover {
+            background-color: var(--dark-message-hover);
+        }
+
+        body.dark-mode .divider {
+            background-color: var(--dark-divider-color);
+        }
+
+        body.dark-mode #user-input-container {
+            background-color: rgba(44, 44, 44, 0.9);
+        }
+
+        body.dark-mode #user-input {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode #send-button {
+            background-color: var(--dark-button-background);
+        }
+
+        body.dark-mode #send-button:hover {
+            background-color: var(--dark-button-hover);
+        }
+
+        body.dark-mode #accuracy-warning {
+            color: var(--dark-warning-color);
+        }
+
+        body.dark-mode #title-container h1 {
+
+        }
+
+        body.dark-mode #sidebar {
+            background-color: var(--dark-chat-background);
+            background: transparent;
+        }
+
+        /* Add this to your existing CSS */
+        .hidden {
+            display: none;
+        }
+
+        #title-container.show {
+            display: block;
+        }
+
+        #chat-box.show {
+            display: block;
+        }
+
+        #sidebar ul li {
+    margin: 15px 0;
+}
+
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+        /* Light and Dark mode button styles */
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Dark theme button styles */
+body.dark-mode #sidebar ul li button {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode #sidebar ul li button:hover {
+    background-color: var(--dark-button-hover);
+}
+
+/* Button icons styling */
+#sidebar ul li a {
+    display: flex;
+    position: relative;
+    bottom: -579px;
+    left: 10px;
+    gap: 7%;
+    align-items: center;
+    text-decoration: none;
+}
+
+#sidebar ul li a i {
+    color: var(--text-color);
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover i {
+    color: var(--button-background);
+}
+
+/* Dark theme icon styles */
+body.dark-mode #sidebar ul li a i {
+    color: var(--dark-text-color);
+}
+
+body.dark-mode #sidebar ul li a:hover i {
+    color: var(--dark-button-background);
+}
+
+        /* Font import */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+/* Default font family */
+body, h1, div {
+    font-family: Montserrat, Arial, sans-serif;
+}
+
+/* Sidebar button styles */
+#sidebar ul li a, #sidebar ul li button {
+    font-family: Montserrat, Arial, sans-serif;
+    font-weight: 600; /* Bold weight for better emphasis */
+}
+
+/* Existing CSS for other elements */
+#sidebar ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    color: var(--button-background);
+}
+
+#sidebar ul li button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--button-background);
+    color: #fff;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar ul li button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Dark theme button styles */
+body.dark-mode #sidebar ul li button {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode #sidebar ul li button:hover {
+    background-color: var(--dark-button-hover);
+}
+
+        /* Toggle Switch Styles */
+/* Toggle Switch Styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--button-background);
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--button-hover);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Dark mode styles for toggle */
+body.dark-mode .switch .slider {
+    background-color: var(--dark-button-background);
+}
+
+body.dark-mode .switch input:checked + .slider {
+    background-color: var(--dark-button-hover);
+}
+
+/* Styling for theme label */
+#theme-label {
+    margin-left: 10px;
+    font-size: 16px;
+    color: var(--text-color);
+    vertical-align: middle;
+}
+
+/* Dark mode styling for the theme label */
+body.dark-mode #theme-label {
+    color: var(--dark-text-color);
+}
+
+/* Dark mode styling for the theme label */
+body.dark-mode #help-menu {
+    color: var(--dark-text-color);
+}
+
+/* Dark mode styling for the theme label */
+body.dark-mode #question-button {
+    color: var(--dark-text-color);
+}
+
+           /* Settings menu styles */
+        #settings-menu {
+            position: absolute;
+            top: 644px;
+            left: 167px;
+            display: none;
+            width: 200px;
+            padding: 10px;
+            background-color: var(--chat-background);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1001;
+        }
+
+        #settings-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #settings-menu ul li {
+            margin: 10px 0;
+        }
+
+        #settings-menu ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        #settings-menu ul li a:hover {
+            color: var(--button-background);
+        }
+
+        /* Dark theme settings menu */
+        body.dark-mode #settings-menu {
+            background-color: var(--dark-chat-background);
+        }
+
+
+
+.paste-button {
+  position: relative;
+  background: transparent;
+  position: absolute;
+  left: 100px;
+  bottom: 577px;
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.button {
+  background-color: #4444;
+  color: #ffff;
+  padding: 6px 8px;
+  font-size: 15px;
+  position: relative;
+  border: 2px solid transparent;
+  border-radius: 15px;
+  cursor: pointer;
+  bottom: 120px;
+
+}
+
+.dropdown-content {
+  display: none;
+  font-size: 13px;
+  position: absolute;
+  z-index: 1;
+  min-width: 50px;
+  background-color: #212121;
+  border: 2px solid #0169ac;
+  border-radius: 5px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  width: 135px;
+  bottom: 25px;
+}
+
+.dropdown-content a {
+  color: #FFFF;
+  padding: 8px 10px;
+  text-decoration: none;
+  display: block;
+  transition: 0.1s;
+}
+
+.dropdown-content a:hover {
+  background-color: #003153;
+  color: #fff;
+}
+
+.dropdown-content a:focus {
+  background-color: #003153;
+  color: #38B7FF;
+}
+
+.dropdown-content #top:hover {
+  border-radius: 0px 13px 0px 0px;
+}
+
+.dropdown-content #bottom:hover {
+  border-radius: 0px 0px 13px 13px;
+}
+
+.paste-button:hover button {
+  border-radius: 15px 15px 0px 0px;
+}
+
+.paste-button:hover .dropdown-content {
+  display: block;
+}
+
+
+
+
+        body.dark-mode #settings-menu ul li a {
+            color: var(--dark-text-color);
+        }
+
+        body.dark-mode #settings-menu ul li a:hover {
+            color: var(--dark-button-background);
+        }
+
+
+        body.dark-mode #help-menu {
+            background-color: var(--dark-chat-background);
+        }
+
+body.dark-mode #help-menu ul li a {
+            color: var(--dark-text-color);
+        }
+
+body.dark-mode #help-menu ul li a:hover {
+            color: var(--dark-button-background);
+        }
+
+        /* Custom Scrollbar Styles */
+#chat-box::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+}
+
+#chat-box::-webkit-scrollbar-thumb {
+    background-color: var(--button-background); /* Scrollbar thumb color */
+    border-radius: 10px; /* Round the scrollbar thumb */
+    border: 2px solid var(--message-background); /* Add padding around the thumb */
+}
+
+#chat-box::-webkit-scrollbar-thumb:hover {
+    background-color: var(--button-hover); /* Thumb color on hover */
+}
+
+#chat-box::-webkit-scrollbar-track {
+    background-color: var(--chat-background); /* Scrollbar track color */
+    border-radius: 10px; /* Round the scrollbar track */
+}
+
+#chat-box {
+    scrollbar-width: thin; /* For Firefox: set scrollbar width */
+    scrollbar-color: var(--button-background) var(--chat-background); /* For Firefox: thumb and track color */
+}
+
+
+.Btn {
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  bottom: -400px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: .4s;
+  cursor: pointer;
+  position: relative;
+  background-color: rgb(31, 31, 31);
+  overflow: hidden;
+}
+
+.svgIcon {
+  transition-duration: .3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.text {
+  position: absolute;
+  color: rgb(255, 255, 255);
+  width: 120px;
+  font-weight: 600;
+  opacity: 0;
+  transition-duration: .4s;
+}
+
+.Btn:hover {
+  width: 110px;
+  transition-duration: .4s;
+  border-radius: 30px;
+}
+
+.Btn:hover .text {
+  opacity: 1;
+  transition-duration: .4s;
+}
+
+.Btn:hover .svgIcon {
+  opacity: 0;
+  transition-duration: .3s;
+}
+
+ #help-button {
+    cursor: pointer;
+}
+
+#help-menu {
+       position: absolute;
+            top: 612px;
+            left: 150px;
+            display: none;
+            width: 200px;
+            height: 170px;
+            padding: 10px;
+            background-color: var(--chat-background);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1001;
+
+#help-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#help-menu ul li {
+    margin: 10px 0;
+}
+
+#help-menu ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+#help-menu ul li a:hover {
+    color: #b0b0b0; /* Slightly lighter color on hover */
+}
+
+#help-menu ul li a i {
+    margin-right: 8px; /* Space between icon and text */
+}
+
+#question-button {
+    background-color: transparent;
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#privacy-button {
+    background-color: transparent;
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    position:absolute;
+    bottom: 100px;
+    font-size: 14px;
+    gap: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 90%;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#question-button i {
+    margin-right: 8px;
+}
+
+#question-button:hover {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+}
+
+#dark-mode-switch {
+    margin: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#privacy-button
+#question-button,
+#updates-button {
+    background-color: transparent;
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100%;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#question-button i,
+#updates-button i {
+    margin-right: 8px;
+}
+
+#question-button:hover,
+#updates-button:hover {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+}
+
+#privacy-button:hover,
+#updates-button:hover {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+}
+
+#dark-mode-switch {
+    margin: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+
+        .hidden {
+    visibility: hidden; /* Hides the element but maintains its space */
+}
+
+
+        #settings-menu select {
+    margin-left: 10px;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+#settings-menu select:hover {
+    border-color: #007bff; /* Change border color on hover */
+}
+
+
+
+/* Styling for list items */
+li {
+    list-style: none; /* Remove bullet points */
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Styling for label */
+.language-label {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    margin-right: 15px;
+}
+
+/* Modern and sleek dropdown styling */
+.language-selector {
+    padding: 10px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+    transition: all 0.3s ease-in-out;
+    width: 200px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Add a custom dropdown arrow */
+.language-selector::after {
+    content: '▼'; /* Custom arrow */
+    position: absolute;
+    right: 10px;
+    pointer-events: none;
+}
+
+/* Hover and focus effects */
+.language-selector:hover,
+.language-selector:focus {
+    border-color: #007bff;
+    background-color: #e9ecef;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Styling for the dropdown options */
+.language-selector option {
+    padding: 10px;
+    font-size: 14px;
+}
+
+.paste-button {
+            position: relative;
+            display: inline-block;
+        }
+
+        .button {
+            background-color: #007bff; /* Modern blue color */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px; /* Rounded corners */
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+        }
+
+        .dropdown-content {
+            display: none; /* Hide the dropdown by default */
+            position: absolute;
+            background-color: white; /* White background for dropdown */
+            min-width: 200px;
+            border-radius: 8px; /* Rounded corners for dropdown */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow for dropdown */
+            z-index: 1;
+            margin-top: 10px; /* Space between button and dropdown */
+            overflow: hidden; /* Hide overflow for rounded corners */
+        }
+
+        .dropdown-content a {
+            color: #333; /* Dark text for links */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1; /* Light grey on hover */
+        }
+
+        /* To enable clicking the button to toggle the dropdown */
+        .dropdown-content.show {
+            display: block; /* Show dropdown */
+        }
+
+
+        * {
+    box-sizing: border-box; /* Ensure padding does not affect total width */
+}
+
+body {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+    background-color: #f0f0f0; /* Light background for contrast */
+    font-family: Arial, sans-serif; /* Set a clean font */
+}
+
+#title-container {
+    text-align: center; /* Center text */
+}
+
+#name-input-container {
+    display: flex; /* Use flexbox for input and button */
+    flex-direction: column; /* Stack input and button vertically */
+    align-items: center; /* Center align items */
+    margin-top: 20px; /* Space above input */
+
+
+         #name-input-container,
+        #change-name-container {
+            display: none; /* Hidden by default */
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #sidebar {
+            background-color: #fff;
+            padding: 15px;
+            border-right: 1px solid #ccc;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+        }
+
+        #chat-history {
+            margin-left: 220px; /* Space for sidebar */
+            padding: 20px;
+        }
+
+        .label {
+            position: relative;
+            display: block;
+            width: 250px;
+            margin: 0 auto;
+            border: 2px solid #373737;
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 10px;
+            background-color: transparent;
+            color: #333;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Feedback Popup Styles */
+.feedback-popup {
+    display: none;
+    position: absolute;
+    width: 300px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.feedback-popup h4 {
+    margin: 0 0 10px;
+    font-size: 1.1em;
+}
+
+.feedback-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feedback-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feedback-options input[type="checkbox"] {
+    accent-color: #007BFF;
+}
+
+.feedback-textarea {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.submit-feedback-btn {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

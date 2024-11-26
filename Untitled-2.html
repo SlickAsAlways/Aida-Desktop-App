@@ -1,0 +1,1109 @@
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="designs.css">
+<style>
+    /* Basic reset */
+    body, h1, div {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Default light mode */
+    :root {
+        --background-color: #fff;
+        --text-color: #333;
+        --border-color: #ddd;
+        --button-background: #007BFF;
+        --button-hover-background: #0056b3;
+    }
+
+    /* Dark mode */
+    [data-theme="dark"] {
+        --background-color: #1e1e1e;
+        --text-color: #e0e0e0;
+        --border-color: #444;
+        --button-background: #1e90ff;
+        --button-hover-background: #1c86ee;
+    }
+
+    /* Main container styling */
+    .container {
+        max-width: 450px;
+        margin: 60px auto;
+        padding: 12px;
+        border-radius: 17px;
+        background-color: var(--background-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-color);
+        position: fixed;
+        bottom: 20px;
+        display: none;
+        right: 20px;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+        width: 310px;
+    }
+
+    
+
+    #suggestion-buttons button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Chat box styling */
+    #chat-box {
+        border: 0.7px solid var(--border-color);
+        border-radius: 10px;
+        padding: 10px;
+        height: 300px;
+        overflow-y: auto;
+        background-color: var(--background-color);
+        margin-bottom: 10px;
+    }
+
+
+
+    #suggestion-buttons button {
+    flex: 1 1 100px;
+    padding: 8px 12px;
+    border: 2px solid #0169ac; /* Set border thickness and color */
+    border-radius: 10px; /* Rounded corners */
+    background-color: #fff; /* White background */
+    color: #000; /* Black text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 14px; /* Font size */
+    width: 100px; /* Fixed width */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition for background and border */
+}
+
+    #suggestion-buttons button:hover {
+        background-color: #ffffff;
+    }
+
+    #toggle-chat {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background-color: #0169ac;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        padding: 20px;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .chat-logo {
+        width: 15%;
+        height: 15%;
+        max-height: 60px;
+        display: block;
+        position: relative;
+        left: -16%;
+        margin: 0 auto 7px;
+    }
+
+    .loading-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 40px;
+    }
+
+    .loading-dots div {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #ffc107;
+        animation: bounce 0.6s infinite alternate;
+    }
+
+    .loading-dots div:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .loading-dots div:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(-10px);
+        }
+    }
+
+    .message {
+    opacity: 0; /* Start invisible */
+    transition: opacity 0.5s ease; /* Transition effect */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px 15px; /* Add padding for spacing around text */
+    background-color: #f1f1f1; /* Example background color for visibility */
+    margin-bottom: 10px; /* Space between messages */
+    max-width: 100%; /* Limit width for better readability */
+    word-wrap: break-word; /* Break long words to prevent overflow */
+}
+
+.fade-in {
+    opacity: 1; /* Fully visible */
+}
+
+
+    .user {
+        background-color: #0169ac;
+        color: white;
+        align-self: flex-end;
+    }
+
+    .assistant {
+        background-color: #eee;
+        color: black;
+        align-self: flex-start;
+    }
+
+    .status-indicator {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background-color: green;
+        position: relative;
+        bottom: -12px;
+        right: 252px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .header-text {
+        margin-left: 10px;
+        font-weight: bold;
+        position: relative;
+        bottom: 8px;
+        left: -94px;
+    }
+
+    /* New styling for online status */
+    .online-status {
+        font-size: 12px; /* Smaller font size */
+        color: var(--text-color); /* Matches text color */
+        margin-left: 10px; /* Adds space from header text */
+        font-weight: normal; /* Not bold */
+        position: relative;
+        left: 43px;
+        bottom: 34px;
+    }
+
+    /* New input field styling */
+    #message-input {
+        width: 93%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    #send-button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background-color: #0169ac;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    #send-button:hover {
+        background-color: #83858c;
+    }
+
+#toggle-chat {
+position: fixed;
+bottom: 10px;
+right: 10px;
+background-color: #0169ac;
+color: white;
+border: none;
+border-radius: 50%; /* Circle shape */
+width: 60px;
+height: 60px;
+display: flex;
+justify-content: center;
+align-items: center; /* Centers the icon vertically and horizontally */
+font-size: 24px;
+cursor: pointer;
+z-index: 1001;
+transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#toggle-chat i {
+font-size: 24px;
+}
+
+/* Hover effect */
+#toggle-chat:hover {
+background-color: #0056b3; /* Darker shade on hover */
+transform: scale(1.1); /* Slightly increases size on hover */
+box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adds shadow for depth */
+}
+
+/* Make button responsive */
+@media (max-width: 600px) {
+#toggle-chat {
+    width: 50px;
+    height: 50px;
+}
+
+#toggle-chat i {
+    font-size: 20px;
+}
+}
+
+#chatbox {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.5s ease;
+}
+
+#chatbox.fade-in {
+    opacity: 1;
+}
+
+#chatbox.fade-out {
+    opacity: 0;
+}
+
+
+        /* Basic styles for demonstration */
+        #whatsapp-popup {
+            display: none; /* Hidden by default */
+            margin-top: 10px;
+        }
+        #back-button, #send-button {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+
+             /* Basic styles for the chatbot */
+             #suggestion-buttons, #whatsapp-popup {
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+        }
+        button {
+            margin: 5px 0;
+        }
+        #whatsapp-popup {
+            display: none; /* Hidden by default */
+        }
+
+
+        /* Adjust input box to match the length of the send button */
+#whatsapp-input {
+    width: 245px; /* Set the width to match the send button */
+    padding: 10px; /* Add some padding for better appearance */
+    border: 1px solid #ccc; /* Add a border for visibility */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-right: 5px; /* Add some space between the input and send button */
+}
+
+/* Style for the send button */
+#send-button {
+    padding: 10px 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+/* Adjust back button size */
+#back-button {
+    padding: 10px 15px; /* Increase padding slightly */
+    font-size: 1.1em; /* Make the font size a little bigger */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+
+</style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIDA Virtual Assistant</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="designs.css">
+
+
+
+<button id="toggle-chat">
+    <i class="fas fa-comment-alt"></i>
+</button>
+
+
+
+
+<div class="container" id="chatbox">
+    <div class="header">
+        <img src="https://staging.mastercopy.co.uk/wp-content/uploads/2024/09/logo.png" alt="Mastercopy Logo" class="chat-logo">
+        <div class="header-text">Assistant Support</div>
+        <div class="status-indicator"></div>
+    </div>
+    <div class="online-status">online</div>
+    <div id="chat-box">
+        <div id="chat-history"></div>
+        <div id="suggestion-buttons" style="display: none;">
+            <button onclick="suggestionClicked('Call Us')">Call Us 📱</button>
+            <button onclick="suggestionClicked('Email')">Email 📧</button>
+            <button id="whatsapp-button" style="display: block; margin-top: 10px;" onclick="suggestionClicked('WhatsApp')">WhatsApp 💬</button>
+            <button id="whatsapp-button" style="display: none;" onclick="suggestionClicked('WhatsApp')">WhatsApp 💬</button>
+
+        </div>
+            <!-- WhatsApp input area -->
+    <div id="whatsapp-popup">
+        <input type="text" id="whatsapp-input" placeholder="Type your message here..." />
+        <button id="send-button" onclick="sendWhatsAppMessage()">Send</button>
+        <button id="back-button" onclick="goBack()">Back</button>
+    </div>
+
+    </div>
+    
+        <div id="chat-history">
+            <!-- Chat history goes here -->
+        </div>
+    </div>
+    
+    </div>
+    
+</div>
+
+<div id="whatsapp-popup">
+    <button id="back-button" onclick="goBack()">Back</button>
+    <input type="text" id="whatsapp-input" placeholder="Type your message here..." />
+    <button id="send-button" onclick="sendWhatsAppMessage()">Send</button>
+</div>
+
+
+
+<script>
+
+// Function to check if the device is mobile
+function isMobile() {
+    return /Mobi|Android/i.test(navigator.userAgent);
+}
+
+// Function to handle suggestion button clicks
+function suggestionClicked(option) {
+    if (option === 'WhatsApp') {
+        if (isMobile()) {
+            // Hide suggestion buttons
+            document.getElementById('suggestion-buttons').style.display = 'none';
+            
+            // Show WhatsApp input area
+            document.getElementById('whatsapp-popup').style.display = 'block';
+            
+            // Add assistant message
+            const message = 'Type your message below to contact us via WhatsApp.';
+            addAssistantMessage(message);
+        } else {
+            addAssistantMessage('This feature is available on mobile devices only.');
+        }
+    } else if (option === 'Call Us') {
+        const phoneNumber = '01642 750404'; // Phone number
+        const message = `You can give us a call at <strong><a href="tel:${phoneNumber}" style="color: #007BFF;">${phoneNumber}</a></strong>!`;
+        addAssistantMessage(message);
+    } else if (option === 'Email') {
+        window.open('mailto:sales@mastercopy.co.uk?subject=Inquiry', '_self');
+    }
+}
+
+// Function to go back to the suggestions
+function goBack() {
+    // Hide WhatsApp input area
+    document.getElementById('whatsapp-popup').style.display = 'none';
+    
+    // Show suggestion buttons again
+    document.getElementById('suggestion-buttons').style.display = 'block';
+}
+
+// Function to send WhatsApp message
+function sendWhatsAppMessage() {
+    const message = document.getElementById('whatsapp-input').value;
+    const phoneNumber = "YOUR_WHATSAPP_NUMBER"; // Replace with the desired WhatsApp number
+    const encodedMessage = encodeURIComponent(message);
+    
+    if (message.trim() !== '') {
+        const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+        window.open(whatsappURL, '_blank'); // Open WhatsApp web
+        
+        // Clear the input after sending
+        document.getElementById('whatsapp-input').value = '';
+        closeWhatsAppPopup(); // Close the popup after sending
+    } else {
+        alert("Please enter a message."); // Alert if the message is empty
+    }
+}
+
+// Function to close the WhatsApp popup
+function closeWhatsAppPopup() {
+    document.getElementById('whatsapp-popup').style.display = 'none';
+    document.getElementById('whatsapp-input').value = ''; // Clear the input field
+}
+
+// Flag to check if the welcome message has been sent
+let welcomeMessageSent = false;
+
+// Function to add assistant messages with name and delay
+function addAssistantMessage(message) {
+    const chatHistory = document.getElementById('chat-history');
+    const assistantMessage = document.createElement('div');
+    assistantMessage.classList.add('message', 'assistant'); // Add the basic classes
+    assistantMessage.innerHTML = message;
+    
+    // Append the message to chat history
+    chatHistory.appendChild(assistantMessage);
+    
+    // Trigger the fade-in effect
+    setTimeout(() => {
+        assistantMessage.classList.add('fade-in'); // Add fade-in class
+    }, 10); // Small delay to allow DOM update
+
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    // Move suggestion buttons to the bottom after message
+    setTimeout(() => {
+        moveSuggestionButtons();
+    }, 1); // Wait for message fade effect to finish before moving buttons
+}
+
+// Function to send automatic welcome message when chatbox opens
+function sendWelcomeMessage() {
+    if (!welcomeMessageSent) { // Check if the welcome message has not been sent
+        setTimeout(() => {
+            const welcomeMessage = 'Welcome to Mastercopy! 👋 How can I help?';
+            addAssistantMessage(welcomeMessage);
+            welcomeMessageSent = true; // Set flag to true after sending
+        }, 700); // 700 ms delay
+    }
+}
+
+// Function to move suggestion buttons to the bottom of the chat history
+function moveSuggestionButtons() {
+    const chatHistory = document.getElementById('chat-history');
+    const suggestionButtons = document.getElementById('suggestion-buttons');
+
+    // Append suggestion buttons to the chat history
+    chatHistory.appendChild(suggestionButtons);
+}
+
+// Function to toggle chatbox visibility with fade effect and auto message
+const chatbox = document.getElementById('chatbox');
+document.getElementById('toggle-chat').addEventListener('click', function () {
+    if (chatbox.style.display === 'block') {
+        chatbox.style.display = 'none'; // Hide immediately
+    } else {
+        chatbox.style.display = 'block'; // Show immediately
+        chatbox.classList.add('fade-in'); // Add fade-in effect
+        // Send automatic welcome message only if it hasn't been sent yet
+        sendWelcomeMessage();
+        
+        // Hide suggestion buttons initially
+        const suggestionButtons = document.getElementById('suggestion-buttons');
+        suggestionButtons.style.display = 'none';
+        
+        // Display suggestion buttons after 1 second
+        setTimeout(() => {
+            suggestionButtons.style.display = 'block'; // Show the buttons
+        }, 1200); // 1200 ms = 1.2 seconds
+    }
+});
+
+// Hide the WhatsApp button on desktop
+if (!isMobile()) {
+    const whatsappButton = document.querySelector("button[onclick=\"suggestionClicked('WhatsApp')\"]");
+    if (whatsappButton) {
+        whatsappButton.style.display = 'none'; // Hide WhatsApp button
+    }
+}
+
+// Initial setup: Hide the WhatsApp popup by default
+document.getElementById('whatsapp-popup').style.display = 'none';
+
+// HTML structure for WhatsApp input (to be added in your HTML file)
+/*
+<div id="whatsapp-popup" style="display: none;">
+    <input type="text" id="whatsapp-input" placeholder="Type your message here..." />
+    <button onclick="sendWhatsAppMessage()">Send</button>
+    <button onclick="goBack()">Cancel</button>
+</div>
+*/
+
+
+
+
+</script>
+
+=======
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="designs.css">
+<style>
+    /* Basic reset */
+    body, h1, div {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Default light mode */
+    :root {
+        --background-color: #fff;
+        --text-color: #333;
+        --border-color: #ddd;
+        --button-background: #007BFF;
+        --button-hover-background: #0056b3;
+    }
+
+    /* Dark mode */
+    [data-theme="dark"] {
+        --background-color: #1e1e1e;
+        --text-color: #e0e0e0;
+        --border-color: #444;
+        --button-background: #1e90ff;
+        --button-hover-background: #1c86ee;
+    }
+
+    /* Main container styling */
+    .container {
+        max-width: 450px;
+        margin: 60px auto;
+        padding: 12px;
+        border-radius: 17px;
+        background-color: var(--background-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-color);
+        position: fixed;
+        bottom: 20px;
+        display: none;
+        right: 20px;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+        width: 310px;
+    }
+
+    
+
+    #suggestion-buttons button:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Chat box styling */
+    #chat-box {
+        border: 0.7px solid var(--border-color);
+        border-radius: 10px;
+        padding: 10px;
+        height: 300px;
+        overflow-y: auto;
+        background-color: var(--background-color);
+        margin-bottom: 10px;
+    }
+
+
+
+    #suggestion-buttons button {
+    flex: 1 1 100px;
+    padding: 8px 12px;
+    border: 2px solid #0169ac; /* Set border thickness and color */
+    border-radius: 10px; /* Rounded corners */
+    background-color: #fff; /* White background */
+    color: #000; /* Black text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 14px; /* Font size */
+    width: 100px; /* Fixed width */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition for background and border */
+}
+
+    #suggestion-buttons button:hover {
+        background-color: #ffffff;
+    }
+
+    #toggle-chat {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background-color: #0169ac;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        padding: 20px;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .chat-logo {
+        width: 15%;
+        height: 15%;
+        max-height: 60px;
+        display: block;
+        position: relative;
+        left: -16%;
+        margin: 0 auto 7px;
+    }
+
+    .loading-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 40px;
+    }
+
+    .loading-dots div {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #ffc107;
+        animation: bounce 0.6s infinite alternate;
+    }
+
+    .loading-dots div:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .loading-dots div:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(-10px);
+        }
+    }
+
+    .message {
+    opacity: 0; /* Start invisible */
+    transition: opacity 0.5s ease; /* Transition effect */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px 15px; /* Add padding for spacing around text */
+    background-color: #f1f1f1; /* Example background color for visibility */
+    margin-bottom: 10px; /* Space between messages */
+    max-width: 100%; /* Limit width for better readability */
+    word-wrap: break-word; /* Break long words to prevent overflow */
+}
+
+.fade-in {
+    opacity: 1; /* Fully visible */
+}
+
+
+    .user {
+        background-color: #0169ac;
+        color: white;
+        align-self: flex-end;
+    }
+
+    .assistant {
+        background-color: #eee;
+        color: black;
+        align-self: flex-start;
+    }
+
+    .status-indicator {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background-color: green;
+        position: relative;
+        bottom: -12px;
+        right: 252px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .header-text {
+        margin-left: 10px;
+        font-weight: bold;
+        position: relative;
+        bottom: 8px;
+        left: -94px;
+    }
+
+    /* New styling for online status */
+    .online-status {
+        font-size: 12px; /* Smaller font size */
+        color: var(--text-color); /* Matches text color */
+        margin-left: 10px; /* Adds space from header text */
+        font-weight: normal; /* Not bold */
+        position: relative;
+        left: 43px;
+        bottom: 34px;
+    }
+
+    /* New input field styling */
+    #message-input {
+        width: 93%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+    #send-button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        background-color: #0169ac;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    #send-button:hover {
+        background-color: #83858c;
+    }
+
+#toggle-chat {
+position: fixed;
+bottom: 10px;
+right: 10px;
+background-color: #0169ac;
+color: white;
+border: none;
+border-radius: 50%; /* Circle shape */
+width: 60px;
+height: 60px;
+display: flex;
+justify-content: center;
+align-items: center; /* Centers the icon vertically and horizontally */
+font-size: 24px;
+cursor: pointer;
+z-index: 1001;
+transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#toggle-chat i {
+font-size: 24px;
+}
+
+/* Hover effect */
+#toggle-chat:hover {
+background-color: #0056b3; /* Darker shade on hover */
+transform: scale(1.1); /* Slightly increases size on hover */
+box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adds shadow for depth */
+}
+
+/* Make button responsive */
+@media (max-width: 600px) {
+#toggle-chat {
+    width: 50px;
+    height: 50px;
+}
+
+#toggle-chat i {
+    font-size: 20px;
+}
+}
+
+#chatbox {
+    opacity: 0;
+    display: none;
+    transition: opacity 0.5s ease;
+}
+
+#chatbox.fade-in {
+    opacity: 1;
+}
+
+#chatbox.fade-out {
+    opacity: 0;
+}
+
+
+        /* Basic styles for demonstration */
+        #whatsapp-popup {
+            display: none; /* Hidden by default */
+            margin-top: 10px;
+        }
+        #back-button, #send-button {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+
+             /* Basic styles for the chatbot */
+             #suggestion-buttons, #whatsapp-popup {
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+        }
+        button {
+            margin: 5px 0;
+        }
+        #whatsapp-popup {
+            display: none; /* Hidden by default */
+        }
+
+
+        /* Adjust input box to match the length of the send button */
+#whatsapp-input {
+    width: 245px; /* Set the width to match the send button */
+    padding: 10px; /* Add some padding for better appearance */
+    border: 1px solid #ccc; /* Add a border for visibility */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    margin-right: 5px; /* Add some space between the input and send button */
+}
+
+/* Style for the send button */
+#send-button {
+    padding: 10px 15px; /* Adjust padding as needed */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+/* Adjust back button size */
+#back-button {
+    padding: 10px 15px; /* Increase padding slightly */
+    font-size: 1.1em; /* Make the font size a little bigger */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+
+</style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIDA Virtual Assistant</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="designs.css">
+
+
+
+<button id="toggle-chat">
+    <i class="fas fa-comment-alt"></i>
+</button>
+
+
+
+
+<div class="container" id="chatbox">
+    <div class="header">
+        <img src="https://staging.mastercopy.co.uk/wp-content/uploads/2024/09/logo.png" alt="Mastercopy Logo" class="chat-logo">
+        <div class="header-text">Assistant Support</div>
+        <div class="status-indicator"></div>
+    </div>
+    <div class="online-status">online</div>
+    <div id="chat-box">
+        <div id="chat-history"></div>
+        <div id="suggestion-buttons" style="display: none;">
+            <button onclick="suggestionClicked('Call Us')">Call Us 📱</button>
+            <button onclick="suggestionClicked('Email')">Email 📧</button>
+            <button id="whatsapp-button" style="display: block; margin-top: 10px;" onclick="suggestionClicked('WhatsApp')">WhatsApp 💬</button>
+            <button id="whatsapp-button" style="display: none;" onclick="suggestionClicked('WhatsApp')">WhatsApp 💬</button>
+
+        </div>
+            <!-- WhatsApp input area -->
+    <div id="whatsapp-popup">
+        <input type="text" id="whatsapp-input" placeholder="Type your message here..." />
+        <button id="send-button" onclick="sendWhatsAppMessage()">Send</button>
+        <button id="back-button" onclick="goBack()">Back</button>
+    </div>
+
+    </div>
+    
+        <div id="chat-history">
+            <!-- Chat history goes here -->
+        </div>
+    </div>
+    
+    </div>
+    
+</div>
+
+<div id="whatsapp-popup">
+    <button id="back-button" onclick="goBack()">Back</button>
+    <input type="text" id="whatsapp-input" placeholder="Type your message here..." />
+    <button id="send-button" onclick="sendWhatsAppMessage()">Send</button>
+</div>
+
+
+
+<script>
+
+// Function to check if the device is mobile
+function isMobile() {
+    return /Mobi|Android/i.test(navigator.userAgent);
+}
+
+// Function to handle suggestion button clicks
+function suggestionClicked(option) {
+    if (option === 'WhatsApp') {
+        if (isMobile()) {
+            // Hide suggestion buttons
+            document.getElementById('suggestion-buttons').style.display = 'none';
+            
+            // Show WhatsApp input area
+            document.getElementById('whatsapp-popup').style.display = 'block';
+            
+            // Add assistant message
+            const message = 'Type your message below to contact us via WhatsApp.';
+            addAssistantMessage(message);
+        } else {
+            addAssistantMessage('This feature is available on mobile devices only.');
+        }
+    } else if (option === 'Call Us') {
+        const phoneNumber = '01642 750404'; // Phone number
+        const message = `You can give us a call at <strong><a href="tel:${phoneNumber}" style="color: #007BFF;">${phoneNumber}</a></strong>!`;
+        addAssistantMessage(message);
+    } else if (option === 'Email') {
+        window.open('mailto:sales@mastercopy.co.uk?subject=Inquiry', '_self');
+    }
+}
+
+// Function to go back to the suggestions
+function goBack() {
+    // Hide WhatsApp input area
+    document.getElementById('whatsapp-popup').style.display = 'none';
+    
+    // Show suggestion buttons again
+    document.getElementById('suggestion-buttons').style.display = 'block';
+}
+
+// Function to send WhatsApp message
+function sendWhatsAppMessage() {
+    const message = document.getElementById('whatsapp-input').value;
+    const phoneNumber = "YOUR_WHATSAPP_NUMBER"; // Replace with the desired WhatsApp number
+    const encodedMessage = encodeURIComponent(message);
+    
+    if (message.trim() !== '') {
+        const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+        window.open(whatsappURL, '_blank'); // Open WhatsApp web
+        
+        // Clear the input after sending
+        document.getElementById('whatsapp-input').value = '';
+        closeWhatsAppPopup(); // Close the popup after sending
+    } else {
+        alert("Please enter a message."); // Alert if the message is empty
+    }
+}
+
+// Function to close the WhatsApp popup
+function closeWhatsAppPopup() {
+    document.getElementById('whatsapp-popup').style.display = 'none';
+    document.getElementById('whatsapp-input').value = ''; // Clear the input field
+}
+
+// Flag to check if the welcome message has been sent
+let welcomeMessageSent = false;
+
+// Function to add assistant messages with name and delay
+function addAssistantMessage(message) {
+    const chatHistory = document.getElementById('chat-history');
+    const assistantMessage = document.createElement('div');
+    assistantMessage.classList.add('message', 'assistant'); // Add the basic classes
+    assistantMessage.innerHTML = message;
+    
+    // Append the message to chat history
+    chatHistory.appendChild(assistantMessage);
+    
+    // Trigger the fade-in effect
+    setTimeout(() => {
+        assistantMessage.classList.add('fade-in'); // Add fade-in class
+    }, 10); // Small delay to allow DOM update
+
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    // Move suggestion buttons to the bottom after message
+    setTimeout(() => {
+        moveSuggestionButtons();
+    }, 1); // Wait for message fade effect to finish before moving buttons
+}
+
+// Function to send automatic welcome message when chatbox opens
+function sendWelcomeMessage() {
+    if (!welcomeMessageSent) { // Check if the welcome message has not been sent
+        setTimeout(() => {
+            const welcomeMessage = 'Welcome to Mastercopy! 👋 How can I help?';
+            addAssistantMessage(welcomeMessage);
+            welcomeMessageSent = true; // Set flag to true after sending
+        }, 700); // 700 ms delay
+    }
+}
+
+// Function to move suggestion buttons to the bottom of the chat history
+function moveSuggestionButtons() {
+    const chatHistory = document.getElementById('chat-history');
+    const suggestionButtons = document.getElementById('suggestion-buttons');
+
+    // Append suggestion buttons to the chat history
+    chatHistory.appendChild(suggestionButtons);
+}
+
+// Function to toggle chatbox visibility with fade effect and auto message
+const chatbox = document.getElementById('chatbox');
+document.getElementById('toggle-chat').addEventListener('click', function () {
+    if (chatbox.style.display === 'block') {
+        chatbox.style.display = 'none'; // Hide immediately
+    } else {
+        chatbox.style.display = 'block'; // Show immediately
+        chatbox.classList.add('fade-in'); // Add fade-in effect
+        // Send automatic welcome message only if it hasn't been sent yet
+        sendWelcomeMessage();
+        
+        // Hide suggestion buttons initially
+        const suggestionButtons = document.getElementById('suggestion-buttons');
+        suggestionButtons.style.display = 'none';
+        
+        // Display suggestion buttons after 1 second
+        setTimeout(() => {
+            suggestionButtons.style.display = 'block'; // Show the buttons
+        }, 1200); // 1200 ms = 1.2 seconds
+    }
+});
+
+// Hide the WhatsApp button on desktop
+if (!isMobile()) {
+    const whatsappButton = document.querySelector("button[onclick=\"suggestionClicked('WhatsApp')\"]");
+    if (whatsappButton) {
+        whatsappButton.style.display = 'none'; // Hide WhatsApp button
+    }
+}
+
+// Initial setup: Hide the WhatsApp popup by default
+document.getElementById('whatsapp-popup').style.display = 'none';
+
+// HTML structure for WhatsApp input (to be added in your HTML file)
+/*
+<div id="whatsapp-popup" style="display: none;">
+    <input type="text" id="whatsapp-input" placeholder="Type your message here..." />
+    <button onclick="sendWhatsAppMessage()">Send</button>
+    <button onclick="goBack()">Cancel</button>
+</div>
+*/
+
+
+
+
+</script>
+
+>>>>>>> cee5dd6d3075dc4091a4c7588e3bc350f0c45479

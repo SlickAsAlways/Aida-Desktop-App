@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aida</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+              :root {
+          /* Light theme colors */
+          --background-color: #f4f4f6;
+          --chat-background: #ffffff;
+          --message-background: #f8f8f8;
+          --message-hover: #f1f1f1;
+          --text-color: #333;
+          --button-background: #0169ac;
+          --button-hover: #003153;
+          --divider-color: #ddd;
+          --warning-color: #888;
+          --spinner-border: rgba(0, 0, 0, 0.1);
+          --spinner-left: #007bff;
+
+          /* Dark theme colors */
+          --dark-background-color: #1e1e1e;
+          --dark-chat-background: #2c2c2c;
+          --dark-message-background: #3c3c3c;
+          --dark-message-hover: #4c4c4c;
+          --dark-text-color: #e0e0e0;
+          --dark-button-background: #0169ac;
+          --dark-button-hover: #003153;
+          --dark-divider-color: #444;
+          --dark-warning-color: #ccc;
+          --dark-spinner-border: rgba(255, 255, 255, 0.1);
+          --dark-spinner-left: #007bff;
+      }
+
+
+              body, h1, div {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
+                  font-family: Arial, sans-serif;
+                  background-color: var(--background-color);
+                  color: var(--text-color);
+              }
+
+             /* Sidebar styles */
+      #sidebar {
+          position: fixed;
+          top: 0;
+          left: -250px; /* Hidden by default */
+          width: 250px;
+          height: 100%;
+          background-color: var(--chat-background);
+          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+          transition: transform 0.4s ease, opacity 0.3s ease; /* Updated transition properties */
+          z-index: 1000;
+          padding: 20px;
+          opacity: 0;
+      }
+
+      #sidebar.open {
+          transform: translateX(250px); /* Smoothly translate the sidebar in */
+          opacity: 1; /* Fade in */
+      }
+
+      #sidebar .close-btn {
+          font-size: 24px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: var(--text-color);
+          transition: color 0.3s ease;
+          position: absolute;
+          top: 20px;
+          right: 20px;
+      }
+
+      #sidebar .close-btn:hover {
+          color: var(--button-background);
+      }
+
+      #sidebar ul {
+          list-style: none;
+          padding: 0;
+          margin-top: 60px; /* Adjust margin to position the list below the close button */
+      }
+
+      #sidebar ul li {
+          margin: 15px 0;
+      }
+
+      #sidebar ul li a {
+          text-decoration: none;
+          color: var(--text-color);
+          font-size: 18px;
+          transition: color 0.3s ease;
+          display: flex;
+          align-items: center;
+      }
+
+      #sidebar ul li a i {
+          margin-right: 15px; /* Add some spacing between icon and text */
+          font-size: 24px;
+          transition: color 0.3s ease;
+      }
+
+      #sidebar ul li a:hover i {
+          color: var(--button-background);
+      }
+
+      #sidebar ul li button {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          background-color: var(--button-background);
+          color: #fff;
+          cursor: pointer;
+          font-size: 16px;
+          transition: background-color 0.3s ease;
+          width: 210px;
+      }
+
+      #sidebar ul li button:hover {
+          background-color: var(--button-hover);
+      }
+
+      /* Dark theme button styles */
+      body.dark-mode #sidebar ul li button {
+          background-color: var(--dark-button-background);
+      }
+
+      body.dark-mode #sidebar ul li button:hover {
+          background-color: var(--dark-button-hover);
+      }
+
+      /* Additional styling for better UX */
+      #sidebar ul li button, #sidebar ul li a {
+          transition: transform 0.3s ease; /* Add hover effect for scaling */
+      }
+
+      #sidebar ul li button:hover, #sidebar ul li a:hover {
+          transform: scale(1.05); /* Slightly scale up the element on hover */
+      }
+
+
+              .container img.logo {
+                  max-width: 4%;
+                  position: fixed;
+                  left: 50px;
+                  bottom: 715px;
+                  height: auto;
+                  margin-bottom: 20px;
+                  cursor: pointer;
+              }
+
+              #chat-box {
+                  padding: 10px;
+                  height: 500px;
+                  width: 800px;
+                  position: absolute;
+                  left: 452px;
+                  overflow-y: auto;
+                  background: transparent;
+                  margin-bottom: 10px;
+                  justify-content: center;
+                  display: flex;
+              }
+
+              #chat-history {
+                  display: flex;
+                  background: transparent;
+                  flex-direction: column;
+                  gap: 10px;
+              }
+
+              .message {
+                  padding: 10px 15px;
+                  border-radius: 10px;
+                  max-width: 75%;
+                  word-wrap: break-word;
+                  font-size: 16px;
+                  line-height: 1.4;
+                  display: flex;
+                  align-items: flex-start;
+                  background-color: var(--message-background);
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                  transition: background-color 0.3s ease;
+              }
+
+              .message:hover {
+                  background-color: var(--message-hover);
+              }
+
+              .message img {
+                  width: 30px;
+                  height: 30px;
+                  margin-right: 10px;
+                  flex-shrink: 0;
+              }
+
+              .message .content {
+                  display: flex;
+                  background: transparent;
+                  flex-direction: column;
+                  width: 100%;
+              }
+
+              .message .response-text {
+                  margin-bottom: 5px;
+                  background: transparent;
+
+              }
+
+              .message .options {
+                  display: flex;
+                  justify-content: center;
+                  gap: 15px;
+                  padding-top: 5px;
+                  border-top: 1px solid var(--divider-color);
+                  opacity: 0;
+                  transition: opacity 0.3s ease;
+              }
+
+              .message .options button {
+                  background-color: transparent;
+                  border: none;
+                  cursor: pointer;
+                  font-size: 20px;
+                  color: var(--text-color);
+                  transition: color 0.3s ease;
+              }
+
+      :root {
+          --background-color: white; /* Light mode background */
+          --text-color: black; /* Light mode text color */
+      }
+
+      .dark-mode {
+          --background-color: black; /* Dark mode background */
+          --text-color: white; /* Dark mode text color */
+      }
+
+      body {
+          background-color: var(--background-color);
+          color: var(--text-color);
+      }
+
+      .message .options button {
+          background-color: transparent;
+          border: none;
+          cursor: pointer;
+          font-size: 20px;
+          color: var(--text-color);
+          transition: color 0.3s ease;
+      }
+
+
+
+              .message .options button:hover {
+                  color: var(--button-background);
+              }
+
+              .message.show-options .options {
+                  opacity: 1;
+                  background: transparent;
+              }
+
+              .user {
+                  align-self: flex-end;
+                  text-align: right;
+                  margin-left: auto;
+              }
+
+              .assistant {
+                  align-self: flex-start;
+                  text-align: left;
+              }
+
+              .divider {
+                  height: 1px;
+                  background-color: var(--divider-color);
+                  margin: 10px 0;
+                  width: 100%;
+              }
+
+              #change-name-container {
+  display: none;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+    /* Dark mode styles */
+        .dark-mode {
+            background-color: #121212;
+            color: #fff;
+        }
+
+        .dark-mode #change-name-container {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+        }
+
+        button {
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #dark-mode-toggle {
+            margin: 10px 0;
+        }
+
+.label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+#name-input-container {
+  display: none;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+#user-name {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#submit-name {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#submit-name:hover {
+  background-color: #0062cc;
+}
+
+.input {
+  width: 84%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#submit-new-name {
+  background-color: #0169ac;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 28px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: manrope;
+  font-weight: bold;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#submit-new-name:hover {
+  background-color: #003153;
+}
+
+#change-name-sidebar {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#change-name-sidebar:hover {
+  background-color: #0062cc;
+}
+
+
+.spinner {
+    width: 40px; /* Increased size for better visibility */
+    height: 40px; /* Increased size */
+    border-radius: 50%;
+    border: 5px solid transparent; /* Transparent border for a clean look */
+    border-top: 5px solid var(--spinner-border); /* Top color for the spinner */
+    border-left: 5px solid var(--spinner-left); /* Left color for the spinner */
+    animation: spin 0.8s linear infinite; /* Faster spin animation */
+    position: relative;
+    background: transparent;
+    right: 20px;
+    bottom: -15px;
+    margin: 0 auto; /* Center the spinner */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Optional: Add a glow effect */
+.spinner::before {
+    content: '';
+    position: absolute;
+    top: -15px; /* Adjust to create a subtle outer glow */
+    left: -15px; /* Adjust to create a subtle outer glow */
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1); /* Soft white glow */
+    filter: blur(12px); /* Blur effect */
+    z-index: -1; /* Behind the spinner */
+}
+
+/* Centering the spinner in the assistant reply container */
+.assistant-reply {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100%; /* Full height of the container */
+    position: relative; /* Ensure relative positioning for the spinner */
+}
+
+
+
+              #user-input-container {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  position: absolute;
+                  left: 50%;
+                  bottom: 60px;
+                  transform: translateX(-50%);
+                  width: 740px;
+                  height: 80px;
+                  padding: 10px;
+                  background-color: rgba(255, 255, 255, 0.9);
+                  border-radius: 25px;
+                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              }
+
+              #user-input {
+                  flex: 1;
+                  padding: 12px 15px;
+                  border: none;
+                  border-radius: 25px;
+                  font-size: 16px;
+                  outline: none;
+                  background-color: #f0f0f0;
+                  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+                  padding-left: 45px;
+                  background-position: 15px center;
+                  background-repeat: no-repeat;
+                  color: #333;
+              }
+
+              #user-input:focus {
+                  background-color: #fff;
+                  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+              }
+
+              #send-button {
+                  margin-left: 10px;
+                  padding: 12px 15px;
+                  border: none;
+                  border-radius: 50%;
+                  background-color: var(--button-background);
+                  color: #fff;
+                  cursor: pointer;
+                  font-size: 18px;
+                  transition: background-color 0.3s ease, transform 0.3s ease;
+              }
+
+              #send-button i {
+                  margin: 0;
+              }
+
+              #send-button:hover {
+                  background-color: var(--button-hover);
+                  transform: scale(1.1);
+              }
+
+                    #suggestion-buttons {
+          margin: 0; /* Remove margin if needed */
+          position: fixed; /* Use fixed positioning */
+          bottom: 165px; /* Fixed distance from the bottom */
+          left: 50%; /* Center horizontally */
+          transform: translateX(-50%); /* Adjust for centering */
+          background: transparent; /* Keep the background transparent */
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          z-index: 1000; /* Make sure it's on top of other elements */
+      }
+
+      #suggestion-buttons button {
+          padding: 8px 12px;
+          border: none;
+          border-radius: 10px;
+          background-color: var(--button-background);
+          color: #fff;
+          cursor: pointer;
+          font-family: manrope;
+          font-size: 14px;
+          transition: background-color 0.3s ease, transform 0.2s ease; /* Add transition for transform */
+          white-space: nowrap; /* Prevents button text from wrapping */
+      }
+
+      /* Add hover effect for buttons */
+      #suggestion-buttons button:hover {
+          background-color: var(--button-hover); /* Change to hover color */
+          transform: scale(1.1); /* Scale up the button slightly */
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for effect */
+      }
+
+
+              #accuracy-warning {
+                  position: absolute;
+                  left: 50%;
+                  bottom: 10px;
+                  background: transparent;
+                  transform: translateX(-50%);
+                  font-size: 12px;
+                  color: var(--warning-color);
+                  text-align: center;
+              }
+
+                  /* Style for the title container */
+              #title-container {
+                  text-align: center;
+                  justify-content: center;
+
+              }
+
+               /* Style for the title container */
+              #title-container {
+                  text-align: center;
+                  justify-content: center;
+
+              }
+
+              /* Style for the h1 text */
+                  /* Style for the title container */
+              #title-container {
+                  text-align: center;
+                  justify-content: center;
+
+              }
+
+                /* Style for the title container */
+              #title-container {
+                  text-align: center;
+                  justify-content: center;
+
+              }
+
+             /* Style for the title container */
+      #title-container {
+          background-color: transparent; /* Ensures no background color */
+          overflow: hidden; /* Hides any overflow */
+      }
+
+      /* Style for the h1 text */
+      #title-container h1 {
+          font-size: 36px;
+          background: linear-gradient(50deg, purple, pink, darkblue, red, indigo, violet, green, yellow, lightblue );
+          background-size: 400%;
+          background-clip: text;
+          color: transparent;
+          animation: rainbow 4s linear forwards; /* Run animation once */
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          position: absolute;
+          background-color: transparent; /* Ensures no background color for the h1 */
+          margin: 0; /* Resets any default margin */
+          padding: 0; /* Resets any default padding */
+          left: 597px;
+          bottom: 500px;
+          display: flex;
+          justify-content: center;
+      }
+
+      /* Keyframes for rainbow shine effect */
+      @keyframes rainbow {
+          0% {
+              background-position: 0% 50%;
+              -webkit-text-fill-color: transparent; /* Keep text transparent initially */
+          }
+          100% {
+              background-position: 100% 50%;
+              -webkit-text-fill-color: #0169ac; /* Revert to original color */
+          }
+      }
+
+              /* Dark theme */
+              body.dark-mode {
+                  background-color: var(--dark-background-color);
+              }
+
+              body.dark-mode {
+                  color: var(--dark-text-color);
+              }
+
+              body.dark-mode #chat-box {
+                  background-color: var(--dark-chat-background);
+                  background: transparent;
+              }
+
+              body.dark-mode .message .options {
+                  background-color: var(--dark-chat-background);
+                  background: transparent;
+              }
+
+              body.dark-mode .message {
+                  background-color: var(--dark-message-background);
+                  color: var(--dark-text-color);
+              }
+
+              body.dark-mode .message .response-text {
+                  background-color: var(--dark-message-background);
+                  color: var(--dark-text-color);
+              }
+
+              body.dark-mode .message:hover {
+                  background-color: var(--dark-message-hover);
+              }
+
+              body.dark-mode .divider {
+                  background-color: var(--dark-divider-color);
+              }
+
+              body.dark-mode #user-input-container {
+                  background-color: rgba(44, 44, 44, 0.9);
+              }
+
+              body.dark-mode #user-input {
+                  background-color: #333;
+                  color: #e0e0e0;
+              }
+
+              body.dark-mode #send-button {
+                  background-color: var(--dark-button-background);
+              }
+
+              body.dark-mode #send-button:hover {
+                  background-color: var(--dark-button-hover);
+              }
+
+              body.dark-mode #accuracy-warning {
+                  color: var(--dark-warning-color);
+              }
+
+              body.dark-mode #title-container h1 {
+
+              }
+
+              body.dark-mode #sidebar {
+                  background-color: var(--dark-chat-background);
+                  background: transparent;
+              }
+
+              /* Add this to your existing CSS */
+              .hidden {
+                  display: none;
+              }
+
+              #title-container.show {
+                  display: block;
+              }
+
+              #chat-box.show {
+                  display: block;
+              }
+
+              #sidebar ul li {
+          margin: 15px 0;
+      }
+
+      #sidebar ul li button {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          background-color: var(--button-background);
+          color: #fff;
+          cursor: pointer;
+          font-size: 16px;
+          transition: background-color 0.3s ease;
+      }
+
+      #sidebar ul li button:hover {
+          background-color: var(--button-hover);
+      }
+
+              /* Light and Dark mode button styles */
+      #sidebar ul li button {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          background-color: var(--button-background);
+          color: #fff;
+          cursor: pointer;
+          font-size: 16px;
+          transition: background-color 0.3s ease;
+      }
+
+      #sidebar ul li button:hover {
+          background-color: var(--button-hover);
+      }
+
+      /* Dark theme button styles */
+      body.dark-mode #sidebar ul li button {
+          background-color: var(--dark-button-background);
+      }
+
+      body.dark-mode #sidebar ul li button:hover {
+          background-color: var(--dark-button-hover);
+      }
+
+      /* Button icons styling */
+      #sidebar ul li a {
+          display: flex;
+          position: relative;
+          bottom: -579px;
+          left: 10px;
+          gap: 7%;
+          align-items: center;
+          text-decoration: none;
+      }
+
+      #sidebar ul li a i {
+          color: var(--text-color);
+          font-size: 24px;
+          transition: color 0.3s ease;
+      }
+
+      #sidebar ul li a:hover i {
+          color: var(--button-background);
+      }
+
+      /* Dark theme icon styles */
+      body.dark-mode #sidebar ul li a i {
+          color: var(--dark-text-color);
+      }
+
+      body.dark-mode #sidebar ul li a:hover i {
+          color: var(--dark-button-background);
+      }
+
+              /* Font import */
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+      /* Default font family */
+      body, h1, div {
+          font-family: Manrope;
+      }
+
+      /* Sidebar button styles */
+      #sidebar ul li a, #sidebar ul li button {
+          font-family: manrope;
+          font-weight: 600; /* Bold weight for better emphasis */
+      }
+
+      /* Existing CSS for other elements */
+      #sidebar ul li a {
+          text-decoration: none;
+          color: var(--text-color);
+          font-size: 18px;
+          transition: color 0.3s ease;
+      }
+
+      #sidebar ul li a:hover {
+          color: var(--button-background);
+      }
+
+      #sidebar ul li button {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          background-color: var(--button-background);
+          color: #fff;
+          cursor: pointer;
+          font-size: 11px;
+          transition: background-color 0.3s ease;
+      }
+
+      #sidebar ul li button:hover {
+          background-color: var(--button-hover);
+      }
+
+      /* Dark theme button styles */
+      body.dark-mode #sidebar ul li button {
+          background-color: var(--dark-button-background);
+      }
+
+      body.dark-mode #sidebar ul li button:hover {
+          background-color: var(--dark-button-hover);
+      }
+
+              /* Toggle Switch Styles */
+      /* Toggle Switch Styles */
+      .switch {
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+      }
+
+      .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+      }
+
+      .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: var(--button-background);
+          transition: 0.4s;
+          border-radius: 34px;
+      }
+
+      .slider:before {
+          position: absolute;
+          content: "";
+          height: 26px;
+          width: 26px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: 0.4s;
+          border-radius: 50%;
+      }
+
+      input:checked + .slider {
+          background-color: var(--button-hover);
+      }
+
+      input:checked + .slider:before {
+          transform: translateX(26px);
+      }
+
+      /* Dark mode styles for toggle */
+      body.dark-mode .switch .slider {
+          background-color: var(--dark-button-background);
+      }
+
+      body.dark-mode .switch input:checked + .slider {
+          background-color: var(--dark-button-hover);
+      }
+
+      /* Styling for theme label */
+      #theme-label {
+          margin-left: 10px;
+          font-size: 16px;
+          color: var(--text-color);
+          vertical-align: middle;
+      }
+
+      /* Dark mode styling for the theme label */
+      body.dark-mode #theme-label {
+          color: var(--dark-text-color);
+      }
+
+      /* Dark mode styling for the theme label */
+      body.dark-mode #help-menu {
+          color: var(--dark-text-color);
+      }
+
+      /* Dark mode styling for the theme label */
+      body.dark-mode #question-button {
+          color: var(--dark-text-color);
+      }
+
+                 /* Settings menu styles */
+              #settings-menu {
+                  position: absolute;
+                  top: 644px;
+                  left: 167px;
+                  display: none;
+                  width: 200px;
+                  padding: 10px;
+                  background-color: var(--chat-background);
+                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                  border-radius: 8px;
+                  z-index: 1001;
+              }
+
+              #settings-menu ul {
+                  list-style: none;
+                  padding: 0;
+                  margin: 0;
+              }
+
+              #settings-menu ul li {
+                  margin: 10px 0;
+              }
+
+              #settings-menu ul li a {
+                  text-decoration: none;
+                  color: var(--text-color);
+                  font-size: 16px;
+                  transition: color 0.3s ease;
+              }
+
+              #settings-menu ul li a:hover {
+                  color: var(--button-background);
+              }
+
+              /* Dark theme settings menu */
+              body.dark-mode #settings-menu {
+                  background-color: var(--dark-chat-background);
+              }
+
+
+
+      .paste-button {
+        position: relative;
+        background: transparent;
+        position: absolute;
+        left: 100px;
+        bottom: 577px;
+        display: block;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .button {
+        background-color: #4444;
+        color: #ffff;
+        padding: 6px 8px;
+        font-size: 15px;
+        position: relative;
+        border: 2px solid transparent;
+        border-radius: 15px;
+        cursor: pointer;
+        bottom: 120px;
+
+      }
+
+      .dropdown-content {
+        display: none;
+        font-size: 13px;
+        position: absolute;
+        z-index: 1;
+        min-width: 50px;
+        background-color: #212121;
+        border: 2px solid #0169ac;
+        border-radius: 5px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        width: 135px;
+        bottom: 25px;
+      }
+
+      .dropdown-content a {
+        color: #FFFF;
+        padding: 8px 10px;
+        text-decoration: none;
+        display: block;
+        transition: 0.1s;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #003153;
+        color: #fff;
+      }
+
+      .dropdown-content a:focus {
+        background-color: #003153;
+        color: #38B7FF;
+      }
+
+      .dropdown-content #top:hover {
+        border-radius: 0px 13px 0px 0px;
+      }
+
+      .dropdown-content #bottom:hover {
+        border-radius: 0px 0px 13px 13px;
+      }
+
+      .paste-button:hover button {
+        border-radius: 15px 15px 0px 0px;
+      }
+
+      .paste-button:hover .dropdown-content {
+        display: block;
+      }
+
+
+
+
+              body.dark-mode #settings-menu ul li a {
+                  color: var(--dark-text-color);
+              }
+
+              body.dark-mode #settings-menu ul li a:hover {
+                  color: var(--dark-button-background);
+              }
+
+
+              body.dark-mode #help-menu {
+                  background-color: var(--dark-chat-background);
+              }
+
+      body.dark-mode #help-menu ul li a {
+                  color: var(--dark-text-color);
+              }
+
+      body.dark-mode #help-menu ul li a:hover {
+                  color: var(--dark-button-background);
+              }
+
+              /* Custom Scrollbar Styles */
+      #chat-box::-webkit-scrollbar {
+          width: 10px; /* Set the width of the scrollbar */
+      }
+
+      #chat-box::-webkit-scrollbar-thumb {
+          background-color: var(--button-background); /* Scrollbar thumb color */
+          border-radius: 10px; /* Round the scrollbar thumb */
+          border: 2px solid var(--message-background); /* Add padding around the thumb */
+      }
+
+      #chat-box::-webkit-scrollbar-thumb:hover {
+          background-color: var(--button-hover); /* Thumb color on hover */
+      }
+
+      #chat-box::-webkit-scrollbar-track {
+          background-color: var(--chat-background); /* Scrollbar track color */
+          border-radius: 10px; /* Round the scrollbar track */
+      }
+
+      #chat-box {
+          scrollbar-width: thin; /* For Firefox: set scrollbar width */
+          scrollbar-color: var(--button-background) var(--chat-background); /* For Firefox: thumb and track color */
+      }
+
+
+      .Btn {
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        bottom: -400px;
+        left: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition-duration: .4s;
+        cursor: pointer;
+        position: relative;
+        background-color: rgb(31, 31, 31);
+        overflow: hidden;
+      }
+
+      .svgIcon {
+        transition-duration: .3s;
+      }
+
+      .svgIcon path {
+        fill: white;
+      }
+
+      .text {
+        position: absolute;
+        color: rgb(255, 255, 255);
+        width: 120px;
+        font-weight: 600;
+        opacity: 0;
+        transition-duration: .4s;
+      }
+
+      #change-name-sidebar {
+  background-color: #0169ac; /* Blue background */
+  color: #fff; /* White text */
+  border: none;
+  font-family: manrope;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#change-name-sidebar:hover {
+  background-color: #003153; /* Darker blue on hover */
+}
+
+      .Btn:hover {
+        width: 110px;
+        transition-duration: .4s;
+        border-radius: 30px;
+      }
+
+      .Btn:hover .text {
+        opacity: 1;
+        transition-duration: .4s;
+      }
+
+      .Btn:hover .svgIcon {
+        opacity: 0;
+        transition-duration: .3s;
+      }
+
+       #help-button {
+          cursor: pointer;
+      }
+
+      body {
+    overflow: hidden; /* Prevent scrolling on the main page */
+}
+
+      #help-menu {
+             position: absolute;
+                  top: 612px;
+                  left: 150px;
+                  display: none;
+                  width: 200px;
+                  height: 170px;
+                  padding: 10px;
+                  background-color: var(--chat-background);
+                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                  border-radius: 8px;
+                  z-index: 1001;
+
+      #help-menu ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+      }
+
+      #help-menu ul li {
+          margin: 10px 0;
+      }
+
+      #help-menu ul li a {
+          text-decoration: none;
+          color: var(--text-color);
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          transition: color 0.3s;
+      }
+
+      #help-menu ul li a:hover {
+          color: #b0b0b0; /* Slightly lighter color on hover */
+      }
+
+      #help-menu ul li a i {
+          margin-right: 8px; /* Space between icon and text */
+      }
+
+      #question-button {
+          background-color: transparent;
+          color: var(--button-text-color);
+          border: none;
+          border-radius: 8px;
+          padding: 10px;
+          font-size: 14px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          width: 100%;
+          transition: background-color 0.3s, color 0.3s;
+      }
+
+      #privacy-button {
+          background-color: transparent;
+          color: var(--button-text-color);
+          border: none;
+          border-radius: 8px;
+          padding: 10px;
+          position:absolute;
+          bottom: 100px;
+          font-size: 14px;
+          gap: 7px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          width: 90%;
+          transition: background-color 0.3s, color 0.3s;
+      }
+
+      #question-button i {
+          margin-right: 8px;
+      }
+
+      #question-button:hover {
+          background-color: var(--button-background);
+          color: var(--button-text-color);
+      }
+
+      #dark-mode-switch {
+          margin: 20px;
+          padding: 10px;
+          cursor: pointer;
+      }
+
+      #privacy-button
+      #question-button,
+      #updates-button {
+          background-color: transparent;
+          color: var(--button-text-color);
+          border: none;
+          border-radius: 8px;
+          padding: 10px;
+          font-size: 14px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          width: 100%;
+          transition: background-color 0.3s, color 0.3s;
+      }
+
+      #question-button i,
+      #updates-button i {
+          margin-right: 8px;
+      }
+
+      #question-button:hover,
+      #updates-button:hover {
+          background-color: var(--button-background);
+          color: var(--button-text-color);
+      }
+
+      #privacy-button:hover,
+      #updates-button:hover {
+          background-color: var(--button-background);
+          color: var(--button-text-color);
+      }
+
+      #dark-mode-switch {
+          margin: 20px;
+          padding: 10px;
+          cursor: pointer;
+      }
+
+
+              .hidden {
+          visibility: hidden; /* Hides the element but maintains its space */
+      }
+
+
+              #settings-menu select {
+          margin-left: 10px;
+          padding: 6px;
+          border-radius: 4px;
+          border: 1px solid #ccc;
+          transition: border-color 0.3s;
+      }
+
+      #settings-menu select:hover {
+          border-color: #007bff; /* Change border color on hover */
+      }
+
+
+
+      /* Styling for list items */
+      li {
+          list-style: none; /* Remove bullet points */
+          padding: 10px 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+      }
+
+      /* Styling for label */
+      .language-label {
+          font-family: 'Arial', sans-serif;
+          font-weight: bold;
+          font-size: 14px;
+          color: #333;
+          margin-right: 15px;
+      }
+
+      /* Modern and sleek dropdown styling */
+      .language-selector {
+          padding: 10px;
+          border-radius: 25px;
+          border: 1px solid #ccc;
+          font-family: 'Arial', sans-serif;
+          background-color: #f9f9f9;
+          color: #333;
+          cursor: pointer;
+          appearance: none; /* Remove default arrow */
+          -webkit-appearance: none; /* For Safari */
+          -moz-appearance: none; /* For Firefox */
+          transition: all 0.3s ease-in-out;
+          width: 200px;
+          text-align: center;
+          font-size: 14px;
+      }
+
+      /* Add a custom dropdown arrow */
+      .language-selector::after {
+          content: '▼'; /* Custom arrow */
+          position: absolute;
+          right: 10px;
+          pointer-events: none;
+      }
+
+      /* Hover and focus effects */
+      .language-selector:hover,
+      .language-selector:focus {
+          border-color: #007bff;
+          background-color: #e9ecef;
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+          outline: none;
+      }
+
+      /* Styling for the dropdown options */
+      .language-selector option {
+          padding: 10px;
+          font-size: 14px;
+      }
+
+      .paste-button {
+                  position: relative;
+                  display: inline-block;
+              }
+
+              .button {
+                  background-color: #007bff; /* Modern blue color */
+                  color: white;
+                  padding: 12px 20px;
+                  border: none;
+                  border-radius: 25px; /* Rounded corners */
+                  font-size: 16px;
+                  cursor: pointer;
+                  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+              }
+
+              .button:hover {
+                  background-color: #0056b3; /* Darker blue on hover */
+                  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+              }
+
+              .dropdown-content {
+                  display: none; /* Hide the dropdown by default */
+                  position: absolute;
+                  background-color: white; /* White background for dropdown */
+                  min-width: 200px;
+                  border-radius: 8px; /* Rounded corners for dropdown */
+                  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow for dropdown */
+                  z-index: 1;
+                  margin-top: 10px; /* Space between button and dropdown */
+                  overflow: hidden; /* Hide overflow for rounded corners */
+              }
+
+              .dropdown-content a {
+                  color: #333; /* Dark text for links */
+                  padding: 12px 16px;
+                  text-decoration: none;
+                  display: block;
+                  transition: background-color 0.3s ease; /* Smooth transition */
+              }
+
+              .dropdown-content a:hover {
+                  background-color: #f1f1f1; /* Light grey on hover */
+              }
+
+              /* To enable clicking the button to toggle the dropdown */
+              .dropdown-content.show {
+                  display: block; /* Show dropdown */
+              }
+
+
+              * {
+          box-sizing: border-box; /* Ensure padding does not affect total width */
+      }
+
+      body {
+          display: flex;
+          justify-content: center; /* Center horizontally */
+          align-items: center; /* Center vertically */
+          height: 100vh; /* Full viewport height */
+          margin: 0; /* Remove default margin */
+          background-color: #f0f0f0; /* Light background for contrast */
+          font-family: Arial, sans-serif; /* Set a clean font */
+      }
+
+      #title-container {
+          text-align: center; /* Center text */
+      }
+
+      #name-input-container {
+          display: flex; /* Use flexbox for input and button */
+          flex-direction: column; /* Stack input and button vertically */
+          align-items: center; /* Center align items */
+          margin-top: 20px; /* Space above input */
+
+
+               #name-input-container,
+              #change-name-container {
+                  display: none; /* Hidden by default */
+                  text-align: center;
+                  margin: 20px 0;
+              }
+
+              .container {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  flex-direction: column;
+              }
+
+              #sidebar {
+                  background-color: #fff;
+                  padding: 15px;
+                  border-right: 1px solid #ccc;
+                  width: 200px;
+                  height: 100vh;
+                  position: fixed;
+              }
+
+              #chat-history {
+                  margin-left: 220px; /* Space for sidebar */
+                  padding: 20px;
+              }
+
+              .label {
+                  position: relative;
+                  display: block;
+                  width: 250px;
+                  margin: 0 auto;
+                  border: 2px solid #373737;
+                  border-radius: 6px;
+                  padding: 10px;
+              }
+
+              .input {
+                  width: 100%;
+                  border: none;
+                  outline: none;
+                  padding: 10px;
+                  background-color: transparent;
+                  color: #333;
+              }
+
+              button {
+                  margin-top: 10px;
+                  padding: 10px 20px;
+                  background-color: #007BFF;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+              }
+
+              button:hover {
+                  background-color: #0056b3;
+              }
+
+
+              /* General button styling */
+      button {
+          padding: 10px 20px;
+          background-color: #4CAF50; /* Green background color */
+          color: white; /* White text */
+          border: none; /* Remove default border */
+          border-radius: 5px; /* Rounded corners */
+          cursor: pointer; /* Pointer cursor on hover */
+          font-size: 16px; /* Font size */
+          transition: background-color 0.3s ease; /* Smooth background color transition */
+      }
+
+      /* Hover effect */
+      button:hover {
+          background-color: #45a049; /* Darker green on hover */
+      }
+
+      /* Specific styling for the submit button */
+      #submit-new-name {
+          background-color: #007BFF; /* Blue background color */
+          padding: 12px 25px;
+          border-radius: 8px;
+      }
+
+   }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .feedback-box {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .feedback-options {
+            margin-top: 10px;
+        }
+
+        .feedback-options input {
+            margin-right: 5px;
+        }
+
+        .additional-feedback {
+            margin-top: 10px;
+        }
+
+        .additional-feedback textarea {
+            width: 100%;
+            height: 60px;
+            margin-top: 5px;
+        }
+
+
+    </style>
+  </head>
+  <body>
+    <div id="sidebar">
+      <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+      <ul>
+        <li>
+          <button id="new-chat-button" onclick="newChat()">New Chat</button>
+        </li>
+        <li>
+          <a href="#" id="settings-button" onclick="toggleSettingsMenu()"
+            ><i class="fa-solid fa-gear"></i>Settings</a
+          >
+        </li>
+        <li>
+          <a href="#" id="help-button" onclick="openHelp()"
+            ><i class="fas fa-question-circle"></i>Help</a
+          >
+        </li>
+
+        <div class="paste-button">
+          <button class="button" onclick="toggleDropdown()">
+            Select Model &nbsp; ▼
+          </button>
+          <div class="dropdown-content" id="dropdownMenu">
+            <a id="smarterModel" href="#">Smarter</a>
+            <a id="preciseModel" href="#">Precise</a>
+            <a id="professionalModel" href="#">Professional</a>
+          </div>
+        </div>
+
+        <li>
+          <a href="analytics.html" id="settings-button"
+            ><i class="fa-solid fa-play"></i> Content Discovery</a
+          >
+        </li>
+      </ul>
+
+      <!-- Help Menu -->
+      <div id="help-menu">
+        <ul>
+          <button id="question-button">
+            <i class="fas fa-question"></i> About Aida
+          </button>
+          <button id="updates-button">
+            <i class="fas fa-calendar"></i> Updates
+          </button>
+          <button
+            id="privacy-button"
+            onclick="location.href='privacy policy page.html';"
+          >
+            <i class="fas fa-user-secret"></i> Privacy Policy
+          </button>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Settings Menu -->
+    <div id="settings-menu">
+      <ul>
+        <li>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle" onclick="toggleTheme()" />
+            <span class="slider"></span>
+          </label>
+          <span for="theme-toggle"></span>
+        </li>
+
+        <div id="name-input-container" style="display: none;">
+        <input type="text" id="user-name" placeholder="Enter your name" />
+        <button id="submit-name">Submit</button>
+      </div>
+
+        <div id="change-name-container" style="display: none;">
+          <label class="label">
+            <input
+              type="text"
+              class="input"
+              placeholder="Enter new name"
+              id="new-user-name"
+              autocomplete="off"
+            />
+          </label>
+          <button id="submit-new-name">Change Name</button>
+        </div>
+        <button id="change-name-sidebar">Change Name</button>
+      </ul>
+    </div>
+
+    <img
+      src="aida.png"
+      alt="Logo2"
+      id="aida-logo"
+      class="logo2"
+      style="width: 50px; display: block; margin: 180px auto 0 auto; margin-right: 810px;"
+    />
+
+    <div class="container">
+      <img
+        src="side-menu.png"
+        alt="Logo"
+        class="logo"
+        id="aida-icon"
+        onclick="toggleSidebar()"
+      />
+      <div class="menu-icon" onclick="toggleSidebar()">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
+      <div id="title-container">
+        <h1 id="greeting"></h1>
+      </div>
+
+
+
+      <div id="suggestion-buttons">
+        <button onclick="suggestionClicked('Tell me a story')">
+          Tell me a story
+        </button>
+        <button onclick="suggestionClicked('Create me a new site')">
+          Create me a new site
+        </button>
+        <button onclick="suggestionClicked('Share a folder')">
+          Share a folder
+        </button>
+        <button onclick="suggestionClicked('Create me a new task')">
+          Create me a new task
+        </button>
+      </div>
+
+      <div id="chat-box">
+        <div id="chat-history"></div>
+      </div>
+
+      <div id="user-input-container">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="How can I help?..."
+          autofocus
+        />
+        <button id="send-button" onclick="sendMessage()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="accuracy-warning">
+      AIDA is not always accurate always check important info.
+    </div>
+
+
+
+    <script>
+
+      document.addEventListener('DOMContentLoaded', () => {
+    const userNameDisplay = document.getElementById('user-name');
+    const nameInput = document.getElementById('name-input');
+    const changeNameButton = document.getElementById('change-name-button');
+
+    // Load the user's name from localStorage when the page loads
+    const storedName = localStorage.getItem('userName');
+    if (storedName) {
+        userNameDisplay.textContent = storedName;
+    }
+
+    // Add event listener to the Change Name button
+    changeNameButton.addEventListener('click', () => {
+        const newName = nameInput.value.trim();
+        if (newName) {
+            localStorage.setItem('userName', newName); // Store the new name
+            userNameDisplay.textContent = newName; // Update the displayed name
+            nameInput.value = ''; // Clear the input field
+        } else {
+            alert('Please enter a name.'); // Alert if no name is entered
+        }
+    });
+});
+
+
+       // Get the name from local storage
+        const userName = localStorage.getItem('userName');
+        const greetingElement = document.getElementById('greeting');
+
+        if (userName) {
+            greetingElement.textContent = `Hello, ${userName}!`;
+        } else {
+            greetingElement.textContent = 'Hello, Guest!';
+        }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                  const greetingElement = document.getElementById("greeting");
+                  const nameInputContainer = document.getElementById("name-input-container");
+                  const userNameInput = document.getElementById("user-name");
+                  const submitNameButton = document.getElementById("submit-name");
+                  const changeNameButton = document.getElementById("change-name-sidebar");
+                  const changeNameContainer = document.getElementById("change-name-container");
+                  const submitNewNameButton = document.getElementById("submit-new-name");
+
+                  // Function to get greeting based on time of day
+                  function getGreeting() {
+                      const hour = new Date().getHours();
+                      if (hour < 12) {
+                          return "Good morning";
+                      } else if (hour < 18) {
+                          return "Good afternoon";
+                      } else {
+                          return "Good evening";
+                      }
+                  }
+
+                  // Load name from localStorage
+                  const storedName = localStorage.getItem("userName");
+                  if (storedName) {
+                      greetingElement.textContent = `${getGreeting()}, ${storedName}!`;
+                  } else {
+                      greetingElement.textContent = "Hello! How can I help?";
+                      // Show input for user's name
+                      nameInputContainer.style.display = "block";
+                  }
+
+                  // On clicking the submit button
+                  submitNameButton.addEventListener("click", function () {
+                      const userName = userNameInput.value.trim();
+                      if (userName) {
+                          localStorage.setItem("userName", userName); // Store the user's name
+                          greetingElement.textContent = `${getGreeting()}, ${userName}!`;
+                          nameInputContainer.style.display = "none"; // Hide input after submission
+                      } else {
+                          alert("Please enter your name.");
+                      }
+                  });
+
+                  // Show change name input on sidebar button click
+                  changeNameButton.addEventListener("click", function () {
+                      changeNameContainer.style.display = "block"; // Show the change name input
+                  });
+
+                  // On clicking the submit button for new name
+                  submitNewNameButton.addEventListener("click", function () {
+                      const newUserName = document.getElementById("new-user-name").value.trim();
+                      if (newUserName) {
+                          localStorage.setItem("userName", newUserName); // Store the new name
+                          greetingElement.textContent = `${getGreeting()}, ${newUserName}!`;
+                          changeNameContainer.style.display = "none"; // Hide input after submission
+                          document.getElementById("new-user-name").value = ""; // Clear the input field
+                      } else {
+                          alert("Please enter a new name.");
+                      }
+                  });
+              });
+
+
+
+      function toggleDropdown() {
+              const dropdown = document.getElementById("dropdownMenu");
+              dropdown.classList.toggle("show"); // Toggle visibility using class
+          }
+
+          // Close the dropdown if the user clicks outside of it
+          window.onclick = function(event) {
+              if (!event.target.matches('.button')) {
+                  const dropdowns = document.getElementsByClassName("dropdown-content");
+                  for (let i = 0; i < dropdowns.length; i++) {
+                      const openDropdown = dropdowns[i];
+                      if (openDropdown.classList.contains('show')) {
+                          openDropdown.classList.remove('show');
+                      }
+                  }
+              }
+          }
+
+              function getAssistantResponse(userInput) {
+          // Here you would implement the logic to generate a response
+          // For demonstration, we're using a simple switch-case based on the input
+          let response;
+
+          switch (userInput) {
+              case 'welcome':
+                  response = languagePacks[currentLanguage].welcome;
+                  break;
+              // Add more cases for different user inputs
+              default:
+                  response = "I'm sorry, I didn't understand that."; // Default response
+          }
+
+          return response; // Return the response in the current language
+      }
+
+
+              let currentLanguage = 'en'; // Default language
+
+      function changeLanguage() {
+          const selectedLanguage = document.getElementById('language-selector').value;
+          currentLanguage = selectedLanguage;
+
+          // Update UI texts
+          updateUIText();
+
+          // Implement logic to update the assistant's replies based on the selected language
+          console.log(`Language changed to: ${currentLanguage}`);
+          localStorage.setItem('language', currentLanguage);
+      }
+
+      function updateUIText() {
+          // Update the UI elements with the selected language
+          document.querySelector('span[for="theme-toggle"]').textContent = languagePacks[currentLanguage].darkMode;
+          document.querySelector('span[for="language-selector"]').textContent = languagePacks[currentLanguage].language;
+
+          // Update other UI text elements as needed
+          // Example: document.getElementById('welcome-message').textContent = languagePacks[currentLanguage].welcome;
+      }
+
+      // Call this function on page load to apply the saved language preference if needed
+      function applySavedLanguage() {
+          const savedLanguage = localStorage.getItem('language');
+          if (savedLanguage) {
+              currentLanguage = savedLanguage; // Set the current language
+              document.getElementById('language-selector').value = savedLanguage; // Set the selected value
+              updateUIText(); // Update the UI texts accordingly
+          }
+      }
+
+      // Call applySavedLanguage on page load
+      window.onload = function() {
+          applySavedTheme();
+          applySavedLanguage();
+      };
+
+
+      function changeLanguage() {
+          const selectedLanguage = document.getElementById('language-selector').value;
+          // Implement the logic for changing the language of your application
+          console.log(`Language changed to: ${selectedLanguage}`);
+          // You can store the language preference in localStorage if needed
+          localStorage.setItem('language', selectedLanguage);
+      }
+
+      // Call this function on page load to apply the saved language preference if needed
+      function applySavedLanguage() {
+          const savedLanguage = localStorage.getItem('language');
+          const languageSelector = document.getElementById('language-selector');
+
+          if (savedLanguage) {
+              languageSelector.value = savedLanguage; // Set the selected value
+          }
+      }
+
+      // Call applySavedLanguage on page load
+      window.onload = function() {
+          applySavedTheme();
+          applySavedLanguage();
+      };
+
+
+
+
+      function addMessageToChatHistory(message) {
+          const chatHistory = document.getElementById("chat-history");
+          const newMessageElement = document.createElement("div");
+          newMessageElement.textContent = message; // Adjust as needed
+          chatHistory.appendChild(newMessageElement);
+      }
+
+
+              function handleUserInput(userInput) {
+          const lowerInput = userInput.toLowerCase();
+
+          // Check if the user input matches the request for funny cat videos
+          if (lowerInput.includes("funny videos of cats")) {
+              // Reply to the user
+              const replyMessage = "Here are some funny cat videos!";
+              displayChatbotReply(replyMessage);
+
+              // Redirect the user to the analytics page after a short delay
+              setTimeout(() => {
+                  window.location.href = "analytics.html"; // Your analytics page URL
+              }, 2000); // Redirect after 2 seconds
+          } else {
+              // Handle other user inputs
+              const defaultReply = "I'm sorry, I didn't understand that.";
+              displayChatbotReply(defaultReply);
+          }
+      }
+
+      // Function to display chatbot reply
+      function displayChatbotReply(message) {
+          // Code to display the message from the chatbot in your chat interface
+          console.log("Chatbot:", message); // Replace with actual chat display logic
+      }
+
+
+              function handleUserInput(userInput) {
+          const lowerInput = userInput.toLowerCase();
+
+          // Check if the user input matches the request for funny cat videos
+          if (lowerInput.includes("funny videos of cats")) {
+              // Reply to the user
+              const replyMessage = "Here are some funny cat videos!";
+              displayChatbotReply(replyMessage);
+
+              // Redirect the user to the analytics page after a short delay
+              setTimeout(() => {
+                  window.location.href = "analytics.html"; // Your analytics page URL
+              }, 2000); // Redirect after 2 seconds
+          } else {
+              // Handle other user inputs
+              const defaultReply = "I'm sorry, I didn't understand that.";
+              displayChatbotReply(defaultReply);
+          }
+      }
+
+      // Function to display chatbot reply
+      function displayChatbotReply(message) {
+          // Code to display the message from the chatbot in your chat interface
+          console.log("Chatbot:", message); // Replace with actual chat display logic
+      }
+
+
+          // Available models and corresponding API paths or model configurations
+          const models = {
+              "Smarter": "tunedModels/aidapublicsmarter-9e3u1pd4044b",
+              "Precise": "tunedModels/aidapublicprecise-15tsg0d1wv5z",
+              "Professional": "tunedModels/aidapublicprofessional-tbyaf0jxhpe2"
+          };
+
+            // JavaScript to handle model selection
+          function changeModel(model) {
+              // Update the application model
+              const selectedModelPath = models[model]; // Get the model path from the map
+
+              if (selectedModelPath) {
+                  console.log("Switching to model:", model, "Path:", selectedModelPath);
+
+                  // Updating the model in the application by sending an API request
+                  fetch('/api/updateModel', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ model: selectedModelPath }),
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      console.log("Model update successful:", data);
+                      // Update the UI or show a message to the user
+                      alert(`Model switched to: ${model}`);
+                  })
+                  .catch((error) => {
+                      console.error('Error switching model:', error);
+                  });
+              } else {
+                  console.error('Invalid model selected.');
+              }
+          }
+
+          // Event listeners for each dropdown item
+          document.getElementById("smarterModel").addEventListener("click", function() {
+              changeModel("Smarter");
+          });
+
+          document.getElementById("preciseModel").addEventListener("click", function() {
+              changeModel("Precise");
+          });
+
+          document.getElementById("professionalModel").addEventListener("click", function() {
+              changeModel("Professional");
+          });
+
+                  // Array of possible suggestions
+          const suggestions = [
+              "Tell me a story",
+              "Recommend a recipe",
+              "Tell me a cool fact",
+              "Tell me a joke",
+              "Write a script for a horror film",
+              "Plan a relaxing day",
+              "Fun fact about the roman empire",
+              "Thank my interviewer",
+              "Morning routine for productivity",
+          ];
+
+          // Function to shuffle and return random suggestions
+          function getRandomSuggestions(num) {
+              // Shuffle the array using Fisher-Yates algorithm
+              const shuffled = suggestions.sort(() => 0.5 - Math.random());
+              // Return the first 'num' suggestions
+              return shuffled.slice(0, num);
+          }
+
+          // Function to update suggestion buttons
+          function updateSuggestionButtons() {
+              const suggestionButtons = document.getElementById('suggestion-buttons');
+              suggestionButtons.innerHTML = ""; // Clear any existing buttons
+
+              const randomSuggestions = getRandomSuggestions(4); // Get 4 random suggestions
+
+              // Create buttons for the random suggestions
+              randomSuggestions.forEach(suggestion => {
+                  const button = document.createElement('button');
+                  button.textContent = suggestion;
+                  button.onclick = () => suggestionClicked(suggestion);
+                  suggestionButtons.appendChild(button);
+              });
+          }
+
+          // Call the function on page load
+          window.onload = updateSuggestionButtons;
+
+          // Function to handle button clicks
+          function suggestionClicked(suggestion) {
+              console.log("Suggestion clicked:", suggestion);
+              // Add your logic for each suggestion here
+          }
+
+
+          function toggleSidebar() {
+          const sidebar = document.getElementById('sidebar');
+          const logo = document.getElementById('aida-icon');
+
+          sidebar.classList.toggle('open');
+
+          // Hide logo when sidebar is open, show it when sidebar is closed
+          if (sidebar.classList.contains('open')) {
+              logo.style.display = 'none';
+          } else {
+              logo.style.display = 'block';
+          }
+      }
+
+
+              // Function to scroll to the bottom of the chat history
+              function scrollToBottom() {
+                  const chatHistory = document.getElementById('chat-history');
+                  chatHistory.scrollTop = chatHistory.scrollHeight;
+              }
+
+              // Function to send the message
+              async function sendMessage() {
+                  const userInput = document.getElementById('user-input').value;
+                  if (!userInput) return;
+
+      // Hide the title and logo, show the chat-box
+      document.getElementById('title-container').classList.add('hidden');  // Hides title
+      document.getElementById('aida-logo').classList.add('hidden');        // Hides logo
+      document.getElementById('chat-box').classList.add('show');           // Shows chat-box
+
+
+      document.getElementById('aida-logo').style.display = 'none';
+
+
+
+                  const chatHistory = document.getElementById('chat-history');
+
+                  // Add user input to chat history
+                  chatHistory.innerHTML += `
+                      <div class="message user">
+                          <img src="profileicon.png" alt="User Icon">
+                          <div class="content">
+                              <div class="response-text"><strong>${localStorage.getItem("userName") || "User"}:</strong> ${userInput}</div>
+
+                          </div>
+                      </div>`;
+
+
+
+
+                  // Scroll to the bottom after adding user message
+                  scrollToBottom();
+
+                  // Add divider
+                  chatHistory.innerHTML += `<div class="divider"></div>`;
+
+                  // Scroll to the bottom after adding divider
+                  scrollToBottom();
+
+                  // Add typing indicator
+                  const typingContainer = document.createElement('div');
+                  typingContainer.className = 'spinner';
+                  const assistantMessage = document.createElement('div');
+                  assistantMessage.className = 'message assistant';
+                  assistantMessage.innerHTML = `
+                      <img src="aida.png" alt="Assistant Icon">
+                      <div class="content">
+                          <div class="response-text"><strong>AIDA:</strong> <div class="spinner"></div></div>
+                          <div class="options">
+                              <button onclick="copyText(this)"><i class="fas fa-copy"></i></button>
+                              <button onclick="shareText(this)"><i class="fas fa-share-alt"></i></button>
+                              <button onclick="thumbUp(this)"><i class="fas fa-thumbs-up"></i></button>
+                              <button onclick="thumbDown(this)"><i class="fas fa-thumbs-down"></i></button>
+                          </div>
+                      </div>`;
+
+                  chatHistory.appendChild(assistantMessage);
+
+                  // Scroll to the bottom after adding assistant message
+                  scrollToBottom();
+
+                  try {
+                      const response = await fetch('http://localhost:5000/generate', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ prompt: userInput })
+                      });
+                      const data = await response.json();
+
+                      // Remove typing indicator
+                      assistantMessage.querySelector('.spinner').remove();
+
+                      if (data.response) {
+                          const assistantResponse = data.response;
+                          const responseTextDiv = assistantMessage.querySelector('.response-text');
+                          let index = 0;
+                          const typingSpeed = 15; // Speed in milliseconds per character
+
+                          function typeCharacter() {
+                              if (index < assistantResponse.length) {
+                                  responseTextDiv.innerHTML += assistantResponse[index++];
+                                  setTimeout(typeCharacter, typingSpeed);
+                              } else {
+                                  // Show options after response is fully typed
+                                  assistantMessage.classList.add('show-options');
+                              }
+                              // Scroll to the bottom during typing
+                              scrollToBottom();
+                          }
+
+                          typeCharacter();
+                      } else {
+                          chatHistory.innerHTML += `<div class="message assistant">Sorry, I didn't understand that.</div>`;
+                          chatHistory.innerHTML += `<div class="divider"></div>`;
+
+                          // Scroll to the bottom after error message
+                          scrollToBottom();
+                      }
+                  } catch (error) {
+                      // Remove typing indicator
+                      assistantMessage.querySelector('.spinner').remove();
+
+                      chatHistory.innerHTML += `<div class="message assistant">There was an error.</div>`;
+                      chatHistory.innerHTML += `<div class="divider"></div>`;
+
+                      // Scroll to the bottom after error message
+                      scrollToBottom();
+                  }
+
+                  // Clear the input field
+                  document.getElementById('user-input').value = '';
+
+                  // Scroll to the bottom after clearing input
+                  scrollToBottom();
+              }
+
+
+
+              // Event listener for the Enter key
+              document.getElementById('user-input').addEventListener('keydown', function(event) {
+                  if (event.key === 'Enter') {
+                      event.preventDefault(); // Prevent default form submission
+                      sendMessage();
+                  }
+              });
+
+              // Functions for action buttons
+              function copyText(element) {
+                  const textToCopy = element.closest('.content').querySelector('.response-text').textContent.trim();
+                  navigator.clipboard.writeText(textToCopy).then(() => {
+                      alert('Text copied to clipboard');
+                  }).catch(err => {
+                      console.error('Error copying text: ', err);
+                  });
+              }
+
+              function shareText(element) {
+                  const textToShare = element.closest('.content').querySelector('.response-text').textContent.trim();
+                  if (navigator.share) {
+                      navigator.share({
+                          title: 'AIDA Response',
+                          text: textToShare
+                      }).catch(error => {
+                          console.error('Error sharing text: ', error);
+                      });
+                  } else {
+                      alert('Share not supported on this browser. Copy the text manually.');
+                  }
+              }
+
+              function thumbUp(element) {
+                  alert('You liked this response');
+              }
+
+              function thumbDown(element) {
+                  alert('You disliked this response');
+              }
+
+              // Function for suggestion button clicks
+              function suggestionClicked(text) {
+                  const userInput = document.getElementById('user-input');
+                  userInput.value = text;
+                  sendMessage(); // Automatically send the message
+              }
+
+              // Function to toggle theme
+              function toggleTheme() {
+                  const body = document.body;
+                  body.classList.toggle('dark-mode');
+                  localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+              }
+
+              // Load theme from localStorage
+              function loadTheme() {
+                  const savedTheme = localStorage.getItem('theme');
+                  if (savedTheme === 'dark') {
+                      document.body.classList.add('dark-mode');
+                  }
+              }
+
+              // Load theme on page load
+              loadTheme();
+
+              // Function to reset chat
+      function newChat() {
+          const chatHistory = document.getElementById('chat-history');
+          chatHistory.innerHTML = ''; // Clear chat history
+
+          // Hide the chat box and show the title
+          document.getElementById('chat-box').classList.remove('show');
+          document.getElementById('title-container').classList.remove('hidden');
+          document.getElementById('aida-logo').classList.remove('hidden');
+
+      document.getElementById('aida-logo').style.display = 'block'; // Ensure it's visible
+
+
+          // Clear the input field
+          document.getElementById('user-input').value = '';
+      }
+
+                // Function to toggle the settings menu
+              function toggleSettingsMenu() {
+                  const settingsMenu = document.getElementById('settings-menu');
+                  settingsMenu.style.display = (settingsMenu.style.display === 'block') ? 'none' : 'block';
+              }
+
+              // Close settings menu when clicking outside of it
+              document.addEventListener('click', function(event) {
+                  const settingsButton = document.getElementById('settings-button');
+                  const settingsMenu = document.getElementById('settings-menu');
+                  if (!settingsMenu.contains(event.target) && !settingsButton.contains(event.target)) {
+                      settingsMenu.style.display = 'none';
+                  }
+              });
+
+         function toggleHelpMenu() {
+                  const helpMenu = document.getElementById('help-menu');
+                  const helpButton = document.getElementById('help-button');
+
+                  // Toggle the display of the help menu
+                  helpMenu.style.display = helpMenu.style.display === 'block' ? 'none' : 'block';
+              }
+
+              // Event listener for Help button
+              document.getElementById('help-button').addEventListener('click', function(event) {
+                  event.preventDefault(); // Prevent the default anchor behavior
+                  toggleHelpMenu();
+              });
+
+              // Close the help menu if clicked outside
+              document.addEventListener('click', function(event) {
+                  const helpMenu = document.getElementById('help-menu');
+                  const helpButton = document.getElementById('help-button');
+                  if (!helpMenu.contains(event.target) && !helpButton.contains(event.target)) {
+                      helpMenu.style.display = 'none';
+                  }
+              });
+
+              // Add functionality to the question button
+      document.getElementById('question-button').addEventListener('click', () => {
+          window.location.href = 'about-aida.html'; // Redirects to the About Aida page
+      });
+
+      // Add functionality to the updates button
+      document.getElementById('updates-button').addEventListener('click', () => {
+          window.location.href = 'updates-aida.html'; // Redirects to the Updates page
+      });
+              document.addEventListener('DOMContentLoaded', () => {
+          const accountsButton = document.getElementById('accounts-button');
+
+          accountsButton.addEventListener('click', () => {
+              window.location.href = 'login.html'; // Redirects to the login page
+          });
+      });
+
+        // Function to toggle the theme and store it in localStorage
+          function toggleTheme() {
+              const isDarkMode = document.getElementById('theme-toggle').checked;
+              if (isDarkMode) {
+                  document.body.classList.add('dark-mode');
+                  localStorage.setItem('theme', 'dark');
+              } else {
+                  document.body.classList.remove('dark-mode');
+                  localStorage.setItem('theme', 'light');
+              }
+          }
+
+          // Function to load the theme from localStorage when the page loads
+          function loadTheme() {
+              const savedTheme = localStorage.getItem('theme');
+              if (savedTheme === 'dark') {
+                  document.body.classList.add('dark-mode');
+                  document.getElementById('theme-toggle').checked = true;
+              } else {
+                  document.body.classList.remove('dark-mode');
+                  document.getElementById('theme-toggle').checked = false;
+              }
+          }
+
+          // Load theme on page load
+          document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+  </body>
+</html>
