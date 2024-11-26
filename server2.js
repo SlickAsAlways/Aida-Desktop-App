@@ -7,29 +7,11 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Initialize the Express app
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000; // Use environment PORT if available
 
 // Initialize the Generative AI client using the API key from environment variables
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'tunedModels/aidapublic-ozpxoaff5jpo' });
-
-
-async function prepareAndSendUserPrompt(userInput) {
-    try {
-        // Send to backend
-        const response = await fetch("http://localhost:5000/generate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: prompt })
-        });
-
-        const data = await response.json();
-        displayResponse(data.response); // display the response in your assistant UI
-    } catch (error) {
-        console.error("Error:", error);
-    }
-}
-
 
 // Middleware
 app.use(cors()); // Enable CORS for all routes
@@ -57,13 +39,36 @@ app.post('/generate', async (req, res) => {
   }
 });
 
-function displayResponse(response) {
-    const assistantMessageContainer = document.getElementById("assistant-response");
-    assistantMessageContainer.textContent = response;
-}
-
-
 // Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+// ==================== Frontend Integration ====================
+
+// Detect the backend URL dynamically (local or deployed)
+const getBackendUrl = () => {
+    // Use environment variable if provided, or default to localhost for development
+    return process.env.BACKEND_URL || 'https://aida-desktop-app-production.up.railway.app/';
+};
+
+async function prepareAndSendUserPrompt(userInput) {
+    try {
+        const backendUrl = getBackendUrl(); // Get the correct backend URL
+        const response = await fetch(`${backendUrl}/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userInput })
+        });
+
+        const data = await response.json();
+        displayResponse(data.response); // Display the response in your assistant UI
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+function displayResponse(response) {
+    const assistantMessageContainer = document.getElementById("assistant-response");
+    assistantMessageContainer.textContent = response;
+}
