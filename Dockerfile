@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the port for the application
-EXPOSE 10000
+EXPOSE 8080
 
 # Start both the application and API
 CMD ["node", "server2.js"]
