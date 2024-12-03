@@ -2158,7 +2158,7 @@
                   scrollToBottom();
 
                   try {
-                      const response = await fetch('https://aida-desktop-app-production.up.railway.app/generate', {
+                      const response = await fetch('http://localhost:5000/generate', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ prompt: userInput })
