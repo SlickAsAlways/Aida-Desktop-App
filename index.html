@@ -2114,14 +2114,14 @@
                   const chatHistory = document.getElementById('chat-history');
 
                   // Add user input to chat history
-chatHistory.innerHTML += `
-    <div class="message user">
-        <img src="https://raw.githubusercontent.com/SlickAsAlways/aida-desktop-app/main/profileicon.png" alt="User Icon">
-        <div class="content">
-            <div class="response-text"><strong>${localStorage.getItem("userName") || "User"}:</strong> ${userInput}</div>
-        </div>
-    </div>`;
+                  chatHistory.innerHTML += `
+                      <div class="message user">
+                          <img src="profileicon.png" alt="User Icon">
+                          <div class="content">
+                              <div class="response-text"><strong>${localStorage.getItem("userName") || "User"}:</strong> ${userInput}</div>
 
+                          </div>
+                      </div>`;
 
 
 
@@ -2141,17 +2141,16 @@ chatHistory.innerHTML += `
                   const assistantMessage = document.createElement('div');
                   assistantMessage.className = 'message assistant';
                   assistantMessage.innerHTML = `
-                      <img src="https://raw.githubusercontent.com/SlickAsAlways/aida-desktop-app/main/aida.png" alt="Assistant Icon">
-<div class="content">
-    <div class="response-text"><strong>AIDA:</strong> <div class="spinner"></div></div>
-    <div class="options">
-        <button onclick="copyText(this)"><i class="fas fa-copy"></i></button>
-        <button onclick="shareText(this)"><i class="fas fa-share-alt"></i></button>
-        <button onclick="thumbUp(this)"><i class="fas fa-thumbs-up"></i></button>
-        <button onclick="thumbDown(this)"><i class="fas fa-thumbs-down"></i></button>
-    </div>
-</div>
-
+                      <img src="aida.png" alt="Assistant Icon">
+                      <div class="content">
+                          <div class="response-text"><strong>AIDA:</strong> <div class="spinner"></div></div>
+                          <div class="options">
+                              <button onclick="copyText(this)"><i class="fas fa-copy"></i></button>
+                              <button onclick="shareText(this)"><i class="fas fa-share-alt"></i></button>
+                              <button onclick="thumbUp(this)"><i class="fas fa-thumbs-up"></i></button>
+                              <button onclick="thumbDown(this)"><i class="fas fa-thumbs-down"></i></button>
+                          </div>
+                      </div>`;
 
                   chatHistory.appendChild(assistantMessage);
 
