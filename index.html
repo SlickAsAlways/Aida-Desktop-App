@@ -2116,7 +2116,7 @@
                   // Add user input to chat history
                   chatHistory.innerHTML += `
                       <div class="message user">
-                          <img src="profileicon.png" alt="User Icon">
+                          <img src="https://raw.githubusercontent.com/SlickAsAlways/aida-desktop-app/main/profileicon.png" alt="User Icon">
                           <div class="content">
                               <div class="response-text"><strong>${localStorage.getItem("userName") || "User"}:</strong> ${userInput}</div>
 
@@ -2141,7 +2141,7 @@
                   const assistantMessage = document.createElement('div');
                   assistantMessage.className = 'message assistant';
                   assistantMessage.innerHTML = `
-                      <img src="aida.png" alt="Assistant Icon">
+                      <img src="https://raw.githubusercontent.com/SlickAsAlways/aida-desktop-app/main/aida.png" alt="Assistant Icon">
                       <div class="content">
                           <div class="response-text"><strong>AIDA:</strong> <div class="spinner"></div></div>
                           <div class="options">
