@@ -2114,14 +2114,14 @@
                   const chatHistory = document.getElementById('chat-history');
 
                   // Add user input to chat history
-                  chatHistory.innerHTML += `
-                      <div class="message user">
-                          <img src="profileicon.png" alt="User Icon">
-                          <div class="content">
-                              <div class="response-text"><strong>${localStorage.getItem("userName") || "User"}:</strong> ${userInput}</div>
+chatHistory.innerHTML += `
+    <div class="message user">
+        <img src="https://raw.githubusercontent.com/SlickAsAlways/aida-desktop-app/main/profileicon.png" alt="User Icon">
+        <div class="content">
+            <div class="response-text"><strong>${localStorage.getItem("userName") || "User"}:</strong> ${userInput}</div>
+        </div>
+    </div>`;
 
-                          </div>
-                      </div>`;
 
 
 
