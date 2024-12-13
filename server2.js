@@ -16,7 +16,7 @@ const model = genAI.getGenerativeModel({ model: 'tunedModels/aidapublic-ozpxoaff
 // CORS Configuration
 const corsOptions = {
     origin: [
-        'http://localhost:3000', // Allow local frontend during development
+        'http://localhost:5000', // Allow local frontend during development
         'https://aida-desktop-app-production.up.railway.app', // Production frontend
     ],
     methods: ['GET', 'POST'],
@@ -57,7 +57,7 @@ app.listen(port, () => {
 
 // Detect the backend URL dynamically (local or deployed)
 const getBackendUrl = () => {
-    return process.env.BACKEND_URL || 'http://localhost:5000'; // Use localhost for local testing
+    return process.env.BACKEND_URL || 'https://aida-desktop-app-production.up.railway.app'; // Use localhost for local testing
 };
 
 async function prepareAndSendUserPrompt(userInput) {
